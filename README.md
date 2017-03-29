@@ -1,2 +1,3 @@
-# SchoolProject
-bbbbringo
+# Project
+An Android Application bringo
+
