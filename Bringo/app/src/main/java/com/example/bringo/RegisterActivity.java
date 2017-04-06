@@ -98,6 +98,7 @@ public class RegisterActivity extends AppCompatActivity {
                 password1Input.setText("");
                 password2Input.setText("");
             }
+            conn.disconnect();
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
