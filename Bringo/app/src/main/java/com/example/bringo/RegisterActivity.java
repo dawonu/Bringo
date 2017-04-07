@@ -1,6 +1,7 @@
 package com.example.bringo;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -77,34 +78,9 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        String jsonString = "{username: email, password: password1}";
-        try {
-            URL url = new URL("https://morning-waters-80123.herokuapp.com/register");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Accept", "text/json");
+        String password = String.valueOf(password1.hashCode());
+        new AsyncGetRegister().execute(email, password);
 
-            conn.setDoOutput(true);
-            OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
-            out.write(jsonString);
-            out.close();
-
-            int status = conn.getResponseCode();
-            if (status == 200) {
-                Intent homeIntent = new Intent(RegisterActivity.this, HomeActivity.class);
-                RegisterActivity.this.startActivity(homeIntent);
-            } else {
-                emailInput.setText("");
-                password1Input.setText("");
-                password2Input.setText("");
-            }
-            conn.disconnect();
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private boolean isEmailValid(String email){
@@ -112,7 +88,55 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private boolean isPasswordValid(String password1, String password2) {
-        return password1.equals(password2);
+        return (password1.length() >= 3) && (password1.equals(password2));
+    }
+
+    private class AsyncGetRegister extends AsyncTask<String,String,Boolean> {
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            String jsonString = "{\"username\": " + params[0] + ", \"password\": " + params[1] + "}";
+            System.out.println(jsonString);
+            try {
+                URL url = new URL("https://morning-waters-80123.herokuapp.com/register");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Accept", "text/json");
+
+                conn.setDoOutput(true);
+                OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
+                out.write(jsonString);
+                out.close();
+
+                int status = conn.getResponseCode();
+                System.out.println("status = " + status);
+                if (status == 200) {
+                    System.out.println("succeed!");
+                    return true;
+                }
+                System.out.println("fail!");
+                conn.disconnect();
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+
+            if (success) {
+                Intent settingsIntent = new Intent(RegisterActivity.this, SettingsActivity.class);
+                RegisterActivity.this.startActivity(settingsIntent);
+            } else {
+                emailInput.setError("Fail to register");
+                emailInput.requestFocus();
+            }
+        }
     }
 
 }
