@@ -2,6 +2,9 @@ package com.example.bringo;
 
 import android.os.AsyncTask;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,80 +22,88 @@ public class GetScenarios {
     HomeActivity ha = null;
     List<String> names = new ArrayList<String>();
 
-    public void getScenarioNames(HomeActivity ha){
+    public void getScenarioNames(HomeActivity ha) {
         this.ha = ha;
-        getDefaultScenarioNames();
-        getCustomizedScenarioNames();
-        System.out.println("names ready "+names.size());
-        ha.namesReady(names);
+        new AsyncGetSceNames().execute();
     }
 
-    /*
-     * getDefaultScenarioNames() sends request to app server and parse JSON message in response
-     * to get scenario names for each scenario ID stored in DefaultScenarios DB
-     */
-    private void getDefaultScenarioNames(){
-        List<DefaultScenarios> scenarioIdList = DefaultScenarios.listAll(DefaultScenarios.class);
-        for(DefaultScenarios ds:scenarioIdList){
-            int sID = ds.getScenarioID();
-            new AsyncGetSceNames().execute(String.valueOf(sID));
-        }
-    }
-
-    private void getCustomizedScenarioNames(){
-
-    }
-
-    private class AsyncGetSceNames extends AsyncTask<String,Void,String>{
+    private class AsyncGetSceNames extends AsyncTask<String,Void,Void>{
 
         @Override
-        protected String doInBackground(String... params) {
-            return doGet(params[0]);
+        protected Void doInBackground(String... params) {
+            getDefaultScenarioNames();
+            return null;
         }
-        protected void onPostExecute(String responseStr){
-            System.out.println("Post: "+responseStr);
-            names.add(responseStr);
+        @Override
+        protected void onPostExecute(Void result){
+            getCustomizedScenarioNames();
             ha.namesReady(names);
         }
 
-    }
+        /*
+         * getDefaultScenarioNames() sends request to app server and parse JSON message in response
+         * to get scenario names for each scenario ID stored in DefaultScenarios DB
+         */
+        private void getDefaultScenarioNames(){
+            List<DefaultScenarios> scenarioIdList = DefaultScenarios.listAll(DefaultScenarios.class);
+            for(DefaultScenarios ds:scenarioIdList){
+                int sID = ds.getScenarioID();
 
-
-    public String doGet(String sID){
-        System.out.println("enter doGet method");
-        int status;
-        StringBuilder responseSB = new StringBuilder("");;
-        HttpURLConnection conn;
-        try{
-            // send GET request
-            URL url = new URL("https://morning-waters-80123.herokuapp.com/getScenarioNameByID?ID="+sID);
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-
-            System.out.println("begin read response");
-            // read response
-            status = conn.getResponseCode();
-            if(status != 200){
-                System.out.println("get not success");
-                return "wrong";
+                // parse the String of response to JSON object to retrieve scenario names
+                String responseStr = doGet(String.valueOf(sID));
+                try{
+                    JSONObject responseJson = new JSONObject(responseStr);
+                    String sceName = responseJson.getString(String.valueOf(sID));
+                    names.add(sceName);
+                }catch(JSONException e) {
+                    e.printStackTrace();
+                }
             }
-            System.out.println("state is 200");
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String responseLine = "";
-            while((responseLine = br.readLine())!=null){
-                System.out.println(responseLine);
-                responseSB.append(responseLine);
-            }
-
-            // close GET request
-            conn.disconnect();
-        }catch (MalformedURLException e) {
-            e.printStackTrace();
-        }catch(IOException e){
-            e.printStackTrace();
         }
-        // return the response as a String
-        return responseSB.toString();
+
+        private void getCustomizedScenarioNames(){
+
+        }
+
+        /*
+         * getGet() method sends GET HTTP request to app's server and returns the JSON response:
+         * {"scenario ID": scenarioName}
+         */
+        private String doGet(String sID){
+            int status;
+            StringBuilder responseSB = new StringBuilder("");;
+            HttpURLConnection conn;
+            try{
+                // send GET request
+                URL url = new URL("https://morning-waters-80123.herokuapp.com/getScenarioNameByID?ID="+sID);
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+
+                // read response
+                status = conn.getResponseCode();
+                if(status != 200){
+                    return "wrong";
+                }
+                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String responseLine = "";
+                while((responseLine = br.readLine())!=null){
+                    responseSB.append(responseLine);
+                }
+
+                // close GET request
+                conn.disconnect();
+            }catch (MalformedURLException e) {
+                e.printStackTrace();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+            // return the response as a String
+            return responseSB.toString();
+        }
+
+
     }
+
+
 
 }
