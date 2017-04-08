@@ -1,9 +1,14 @@
 package com.example.bringo;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -11,6 +16,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import java.util.Calendar;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
@@ -23,7 +29,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         final HomeActivity ha = this;
         // initialize the default scenarios db
-        initialDefaultScenariosDB();
+        //initialDefaultScenariosDB();
         GetScenarios gs = new GetScenarios();
         gs.getScenarioNames(ha);
     }
@@ -86,12 +92,13 @@ public class HomeActivity extends AppCompatActivity {
                 if(convertView == null) {
                     addImage = new ImageView(context);
                     addImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                    addImage.setLayoutParams(new LinearLayoutCompat.LayoutParams(450,280));
                     addImage.setPadding(8, 8, 8, 8);
                 }else{
                     addImage = (ImageView) convertView;
                 }
-                addImage.setImageResource(R.mipmap.ic_launcher);
-                addImage.setBackgroundColor(Color.GRAY);
+                addImage.setImageResource(R.drawable.add);
+                addImage.setBackgroundColor(Color.LTGRAY);
                 // set OnClickListener for the add button
                 addImage.setOnClickListener(new AddScenarioOnClickListener(position));
                 return addImage;
@@ -107,7 +114,8 @@ public class HomeActivity extends AppCompatActivity {
                     sceButton = (Button) convertView;
                 }
                 sceButton.setText(names.get(position-1));
-                sceButton.setBackgroundColor(Color.GRAY);
+                sceButton.setTextSize(20);
+                sceButton.setBackgroundColor(Color.LTGRAY);
                 sceButton.setId(position);
                 // set OnClickLinstener for each item on the grid view
                 sceButton.setOnClickListener(new ScenarioOnClickListener(position));
@@ -126,9 +134,9 @@ public class HomeActivity extends AppCompatActivity {
         }
         @Override
         public void onClick(View v) {
-            // the following code is just for test
+            // the following code is just for test!!!
             v.setBackgroundColor(Color.BLUE);
-            //System.out.println(sID);
+            System.out.println(sID);
         }
     }
 
@@ -144,8 +152,43 @@ public class HomeActivity extends AppCompatActivity {
         public void onClick(View v) {
             // the following code is just for test
             v.setBackgroundColor(Color.BLUE);
-            //System.out.println(sID);
+            System.out.println(sID);
+            // the following code is just for notification set test
+            NotificationReceiver.updateNotification("Title","Notification Content");
+            setNotificationAlarm(18, 33, 50, true);
         }
     }
+
+    public void setNotificationAlarm(int hour,int minute,int second, boolean repeat){
+        // the following code is just for notification test!!!
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY,hour);
+        calendar.set(Calendar.MINUTE,minute);
+        calendar.set(Calendar.SECOND,second);
+
+        // NotificationReceiver is a BroadcastReceiver class
+        Intent intent = new Intent(getApplicationContext(),NotificationReceiver.class);
+        // Alarm Service requires a PendingIntent as param, set the intent to the pendingIntent
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),101,
+                intent,PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        // set an alarm that works even if app is cosed, depends on calendar time,
+        // repeats everyday, with pendingIntent
+        // So when alarm goes off NotificationReceiver will be triggered
+        if(repeat == true){
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY,pendingIntent);
+        }else{
+            alarmManager.set(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),pendingIntent);
+        }
+
+        // cancel the alarm
+        //alarmManager.cancel(pendingIntent);
+
+    }
+
+
+
 
 }
