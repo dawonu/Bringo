@@ -41,6 +41,15 @@
         android:layout_above="@+id/logOutButton"
         android:layout_toEndOf="@+id/imageButton" />
 
+    <Button
+        android:text="testing"
+        android:id="@+id/testingButton"
+        android:fontFamily="casual"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="220dp"
+        android:layout_marginBottom="20dp" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

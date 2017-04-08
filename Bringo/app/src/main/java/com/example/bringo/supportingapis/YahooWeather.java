@@ -21,6 +21,8 @@ import java.util.Map;
  * how to use this class, eg:
  * YahooWeather weather = new YahooWeather();
  * weather.refreshWeather("pittsburgh"); -> argument is the location;
+ * weather.getTodayWeather(); -> today
+ * weather.getTomorrowWeather(); -> tomorrow
  * String condition = weather.getWeather("07 Apr 2017"); -> argument is the date, in this format.
  *
  */
@@ -56,15 +58,15 @@ public class YahooWeather {
 
                 reader.close();
 
-                System.out.println("result:" + result.toString());
+//                System.out.println("result:" + result.toString());
 
                 JSONObject data = new JSONObject(result.toString());
 
                 JSONObject queryResults = data.optJSONObject("query");
-                System.out.println("query:" + queryResults);
+//                System.out.println("query:" + queryResults);
 
                 int count = queryResults.optInt("count");
-                System.out.println("count:" + count);
+//                System.out.println("count:" + count);
 
                 if (count == 0) {
                     error = new LocationWeatherException("No weather information found for " + location);
@@ -73,16 +75,20 @@ public class YahooWeather {
 
                 JSONArray forecastJSON = queryResults.optJSONObject("results").optJSONObject("channel")
                         .optJSONObject("item").optJSONArray("forecast");
-                System.out.println("forecast:" + forecastJSON.get(0));
-                for (int i = 0; i < forecastJSON.length(); i++) {
+//                System.out.println("forecast:" + forecastJSON.get(0));
+                if (forecastJSON.length() >= 2) {
+                    weatherMap.put("today", forecastJSON.getJSONObject(0).getString("text"));
+                    weatherMap.put("tomorrow", forecastJSON.getJSONObject(1).getString("text"));
+                }
+                for (int i = 2; i < forecastJSON.length(); i++) {
                     JSONObject temp = forecastJSON.getJSONObject(i);
                     String date = temp.getString("date");
                     String condition = temp.getString("text");
-                    System.out.println("date:" + date);
-                    System.out.println("condition:" + condition);
+//                    System.out.println("date:" + date);
+//                    System.out.println("condition:" + condition);
                     weatherMap.put(date, condition);
                 }
-
+                System.out.println("weather data:" + weatherMap);
                 return null;
 
             } catch (Exception e) {
@@ -96,6 +102,14 @@ public class YahooWeather {
 
     public String getWeather(String date) {
         return weatherMap.get(date);
+    }
+
+    public String getTodayWeather() {
+        return weatherMap.get("today");
+    }
+
+    public String getTomorrowWeather() {
+        return weatherMap.get("tomorrow");
     }
 
     private class LocationWeatherException extends Exception {

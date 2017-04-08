@@ -1,0 +1,14 @@
+How to use location & weather
+
+1. get current location by method: Location location = getCurrentLocation();
+
+2. use that current location to refresh location (i.e. get a formatted address by use google geocoding)
+   geocoding.refreshLocation(location);
+   String address = geocoding.getAddress();
+
+3. use the address to refresh weather
+   yahooWeather.refreshWeather(address);
+  results:
+   String condition1 = weather.getTodayWeather(); -> today
+   String condition2 = weather.getTomorrowWeather(); -> tomorrow
+   String condition3 = weather.getWeather("07 Apr 2017"); -> argument is the date, in this format.
