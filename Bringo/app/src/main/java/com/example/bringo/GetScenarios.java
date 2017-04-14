@@ -1,6 +1,7 @@
 package com.example.bringo;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,6 +56,7 @@ public class GetScenarios {
                     JSONObject responseJson = new JSONObject(responseStr);
                     String sceName = responseJson.getString(String.valueOf(sID));
                     names.add(sceName);
+                    Log.d("debugging names list", sceName);
                 }catch(JSONException e) {
                     e.printStackTrace();
                 }

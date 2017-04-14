@@ -2,13 +2,13 @@ package com.example.bringo;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -29,7 +29,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         final HomeActivity ha = this;
         // initialize the default scenarios db
-        //initialDefaultScenariosDB();
+        initialDefaultScenariosDB();
         GetScenarios gs = new GetScenarios();
         gs.getScenarioNames(ha);
     }
@@ -88,6 +88,7 @@ public class HomeActivity extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             // add an add button image to position 0
             if(position==0){
+
                 ImageView addImage;
                 if(convertView == null) {
                     addImage = new ImageView(context);
@@ -155,7 +156,7 @@ public class HomeActivity extends AppCompatActivity {
             System.out.println(sID);
             // the following code is just for notification set test
             NotificationReceiver.updateNotification("Title","Notification Content");
-            setNotificationAlarm(18, 33, 50, true);
+            setNotificationAlarm(02, 14, 10, true);
         }
     }
 
