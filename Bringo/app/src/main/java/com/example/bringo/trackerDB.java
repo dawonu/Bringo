@@ -2,21 +2,20 @@ package com.example.bringo;
 
 import com.orm.SugarRecord;
 
-public class TrackerRecordsDB extends SugarRecord{
+public class trackerDB extends SugarRecord{
 
-    /*
     private int id;
-    private String name;
+    private String tagName;
     private String pass;
     private boolean forgetReminder;
 
-    public TrackerRecordsDB(){
+    public trackerDB(){
 
     }
 
-    public TrackerRecordsDB(int id, String name, String pwd, boolean forgetReminder){
+    public trackerDB(int id, String name, String pwd, boolean forgetReminder){
         this.id = id;
-        this.name = name;
+        this.tagName = name;
         this.pass = pwd;
         this.forgetReminder = forgetReminder;
     }
@@ -26,7 +25,7 @@ public class TrackerRecordsDB extends SugarRecord{
     }
 
     public String getName(){
-        return this.name;
+        return this.tagName;
     }
 
     public String getPwd(){
@@ -36,17 +35,5 @@ public class TrackerRecordsDB extends SugarRecord{
     public boolean getForgetReminder(){
         return this.forgetReminder;
     }
-    */
-    int scenarioID;
 
-    public TrackerRecordsDB(){
-    }
-
-    public TrackerRecordsDB(int scenarioID){
-        this.scenarioID = scenarioID;
-    }
-
-    public int getScenarioID(){
-        return scenarioID;
-    }
 }

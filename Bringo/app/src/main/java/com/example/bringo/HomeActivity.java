@@ -6,12 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -25,19 +23,17 @@ import java.util.List;
 public class HomeActivity extends AppCompatActivity {
     private final static int DEFAULT_SCENARIOS_COUNT = 6;
     private GridView gridView;
+    private Toolbar myToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        //set Toolbar and Toolbar title
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        //set up toolbar
+        myToolbar = (Toolbar) findViewById(R.id.home_toolbar);
         myToolbar.setTitle("Home");
         setSupportActionBar(myToolbar);
-
-
-
 
         final HomeActivity ha = this;
         // initialize the default scenarios db

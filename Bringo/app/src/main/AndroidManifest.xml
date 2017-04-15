@@ -49,6 +49,7 @@
         <activity android:name=".RegisterActivity">
 
         </activity>
+
         <activity android:name=".TrackActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
