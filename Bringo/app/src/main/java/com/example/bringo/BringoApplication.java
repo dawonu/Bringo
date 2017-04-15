@@ -14,7 +14,7 @@ import com.orm.SugarDb;
 public class BringoApplication extends SugarApp {
     @Override
     public void onCreate() {
-        System.out.println("FUCK YOU ON THE FACE AND EAT PIG SHIT");
+        System.out.println("class BringoApplication extends SugarApp");
 
         super.onCreate();
 
