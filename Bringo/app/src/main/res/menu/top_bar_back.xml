@@ -4,10 +4,10 @@
 
     <!-- "Mark Favorite", should appear as action button if possible -->
     <item
-        android:id="@+id/action_favorite"
-        android:icon="@drawable/edit"
-        android:title="edit"
-        app:showAsAction="ifRoom"/>
+        android:id="@+id/action_track_back"
+        android:icon="@drawable/goback"
+        android:title="back"
+        app:showAsAction="always"/>
 
 
 </menu>

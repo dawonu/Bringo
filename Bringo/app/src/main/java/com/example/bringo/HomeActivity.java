@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
@@ -30,8 +31,12 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        //set Toolbar and Toolbar title
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        myToolbar.setTitle("Home");
         setSupportActionBar(myToolbar);
+
+
 
 
         final HomeActivity ha = this;
@@ -40,19 +45,6 @@ public class HomeActivity extends AppCompatActivity {
         GetScenarios gs = new GetScenarios();
         gs.getScenarioNames(ha);
     }
-
-
-
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // 為了讓 Toolbar 的 Menu 有作用，這邊的程式不可以拿掉
-        getMenuInflater().inflate(R.menu.top_bar_items, menu);
-        return true;
-    }
-
-
 
 
     /*

@@ -14,10 +14,19 @@ import com.orm.SugarDb;
 public class BringoApplication extends SugarApp {
     @Override
     public void onCreate() {
+        System.out.println("FUCK YOU ON THE FACE AND EAT PIG SHIT");
+
         super.onCreate();
 
-        SugarContext.init(getApplicationContext());
+        //SugarContext.init(getApplicationContext());
+        SugarContext.init(this);
         SchemaGenerator schemaGenerator = new SchemaGenerator(this);
         schemaGenerator.createDatabase(new SugarDb(this).getDB());
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        SugarContext.terminate();
     }
 }
