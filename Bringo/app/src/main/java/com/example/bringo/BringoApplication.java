@@ -23,10 +23,5 @@ public class BringoApplication extends SugarApp {
         SchemaGenerator schemaGenerator = new SchemaGenerator(this);
         schemaGenerator.createDatabase(new SugarDb(this).getDB());
     }
-
-    @Override
-    public void onTerminate() {
-        super.onTerminate();
-        SugarContext.terminate();
-    }
+    
 }
