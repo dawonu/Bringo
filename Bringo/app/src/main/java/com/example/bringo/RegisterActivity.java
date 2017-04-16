@@ -11,9 +11,12 @@ import android.widget.EditText;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -78,9 +81,12 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        String password = String.valueOf(password1.hashCode());
-        new AsyncGetRegister().execute(email, password);
-
+//        String password = String.valueOf(password1.hashCode());
+        String password = SHA256password(password1);
+        System.out.println("hashed password in SHA256: " + password);
+        if (password != null) {
+            new AsyncGetRegister().execute(email, password);
+        }
     }
 
     private boolean isEmailValid(String email){
@@ -89,6 +95,21 @@ public class RegisterActivity extends AppCompatActivity {
 
     private boolean isPasswordValid(String password1, String password2) {
         return (password1.length() >= 3) && (password1.equals(password2));
+    }
+
+    private static String SHA256password(String password) {
+        MessageDigest md;
+        try {
+            byte[] passwordByte = password.getBytes();
+            md = MessageDigest.getInstance("SHA-256");
+            byte[] digestResult = md.digest(passwordByte);
+            BigInteger bI = new BigInteger(digestResult);
+            String hashedPassword = bI.toString();
+            return hashedPassword;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private class AsyncGetRegister extends AsyncTask<String,String,Boolean> {
@@ -112,6 +133,11 @@ public class RegisterActivity extends AppCompatActivity {
                 System.out.println("status = " + status);
                 if (status == 200) {
                     System.out.println("succeed!");
+                    // delete all testing records from data base
+                    UserDB.deleteAll(UserDB.class);
+                    // register, create a new one
+                    UserDB userDB = new UserDB(params[0]);
+                    userDB.save();
                     return true;
                 }
                 System.out.println("fail!");

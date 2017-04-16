@@ -9,123 +9,95 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.example.bringo.supportingapis.GoogleGeocoding;
+import com.example.bringo.supportingapis.WeatherAPI;
 import com.example.bringo.supportingapis.YahooWeather;
+
+import org.w3c.dom.Text;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.BLUETOOTH;
+import static android.Manifest.permission.BLUETOOTH_ADMIN;
+import static android.Manifest.permission.SET_ALARM;
 
-public class SettingsActivity extends AppCompatActivity implements LocationListener {
+public class SettingsActivity extends AppCompatActivity {
 
-    public static int GET_WEATHER_FROM_CURRENT_LOCATION = 1;
+    public static int REQUEST_CODE = 1;
 
-    private Button test;
+    private TextView name;
     private Switch locationSwitch;
-    private Location currentLocation;
+    private Switch calendarSwitch;
+    private Switch bluetoothSwitch;
+    private Switch calendarReminder;
+    private Switch travelReminder;
+    private BottomNavigationView mBottomNav;
 
-    private YahooWeather weather;
-    private GoogleGeocoding geocoding;
-
+    private UserDB userDB = UserDB.listAll(UserDB.class).get(0);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        test = (Button) findViewById(R.id.testingButton);
-        test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getWeather();
-            }
-        });
+        //set bottom bar selection
+        mBottomNav = (BottomNavigationView) findViewById(R.id.nav_settings);
 
+        //listener for nav item
+//        mBottomNav.setOnNavigationItemSelectedListener();
+
+        // display the email address
+        name = (TextView) findViewById(R.id.emailDisplay);
+        if (userDB != null) {
+            name.setText("user: " + userDB.getUserName());
+        }
+
+        // 5 setting switches
         locationSwitch = (Switch) findViewById(R.id.switch1);
         locationSwitch.setOnCheckedChangeListener(new AcLocationListener());
 
+        calendarSwitch = (Switch) findViewById(R.id.switch2);
+        calendarSwitch.setOnCheckedChangeListener(new AcCalendarListener());
+
+        bluetoothSwitch = (Switch) findViewById(R.id.switch3);
+        bluetoothSwitch.setOnCheckedChangeListener(new AcBluetoothListener());
+
+        calendarReminder = (Switch) findViewById(R.id.switch4);
+        calendarReminder.setOnCheckedChangeListener(new CalendarReminderListener());
+
+        travelReminder = (Switch) findViewById(R.id.switch5);
+        travelReminder.setOnCheckedChangeListener(new TravelReminderListener());
+
+        // asking for access
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-            if (checkSelfPermission(ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{ACCESS_FINE_LOCATION}, GET_WEATHER_FROM_CURRENT_LOCATION);
+            String[] permissions = new String[] {SET_ALARM, ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION, BLUETOOTH, BLUETOOTH_ADMIN};
+            boolean needGrantedPermissions = false;
+            for (int i = 0, size = permissions.length; i < size; i++) {
+                if (checkSelfPermission(permissions[i]) != PackageManager.PERMISSION_GRANTED) {
+                    needGrantedPermissions = true;
+                } else {
+                    permissions[i] = "";
+                }
+            }
+
+            if (needGrantedPermissions) {
+                requestPermissions(permissions, REQUEST_CODE);
             }
         }
-        getCurrentLocation();
     }
 
-    private Location getCurrentLocation() {
-
-        final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-//        System.out.println("GPS"+isGPSEnabled);
-        if(!isGPSEnabled) {
-            startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), 0);
-        }
-
-        Criteria locationCriteria = new Criteria();
-
-        if (isNetworkEnabled) {
-            locationCriteria.setAccuracy(Criteria.ACCURACY_COARSE);
-        } else if (isGPSEnabled) {
-            locationCriteria.setAccuracy(Criteria.ACCURACY_FINE);
-        }
-
-        locationManager.requestSingleUpdate(locationCriteria, this, null);
-        locationManager.requestSingleUpdate(locationCriteria, this, null);
-
-        String provider = locationManager.getBestProvider(locationCriteria, true);
-//        System.out.println("Best provider is " + provider);
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-        }
-        currentLocation = locationManager.getLastKnownLocation(provider);
-//        System.out.println("location is " + currentLocation);
-        return currentLocation;
-    }
-
-    //may be called from outside??
-    private void getWeather() {
-
-        String address = geocoding.getAddress();
-        System.out.println("address: " + address);
-
-        weather = new YahooWeather();
-        weather.refreshWeather(address);
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        getCurrentLocation();
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
 
     private class AcLocationListener implements CompoundButton.OnCheckedChangeListener{
         @Override
@@ -133,25 +105,134 @@ public class SettingsActivity extends AppCompatActivity implements LocationListe
             if (isChecked) {
 //                System.out.println("begin");
                 if (checkSelfPermission(ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    geocoding = new GoogleGeocoding();
-                    getCurrentLocation();
-                    System.out.println("current location: " + currentLocation);
-                    if (currentLocation != null) {
-//                        System.out.println("lat: " + currentLocation.getLatitude());
-//                        System.out.println("lng: " + currentLocation.getLongitude());
-                        geocoding.refreshLocation(currentLocation);
+                    if (userDB != null) {
+                        System.out.print(userDB.getUserName());
+                        userDB.setAcLocation(true);
+                        userDB.save();
+                        System.out.println("name: " + userDB.getUserName());
+                        System.out.println("status: " + userDB.getAcLocation());
                     }
-                    return;
                 } else {
                     AlertDialog.Builder window =new AlertDialog.Builder(SettingsActivity.this);
                     window.setTitle("Access to location")
-                            .setMessage("Please change your settings to authorize Bringo to access your location. ")
+                            .setMessage("Please change your settings to authorize Bringo to access your location." +
+                                    "(in Settings - APP) ")
                             .setPositiveButton("OK", null)
                             .show();
                     locationSwitch.setChecked(false);
                 }
+            } else {
+                if (userDB != null) {
+                    userDB.setAcLocation(false);
+                    userDB.save();
+                }
             }
         }
     }
+
+    private class AcCalendarListener implements CompoundButton.OnCheckedChangeListener{
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+
+                } else {
+
+                }
+            }
+        }
+
+    private class AcBluetoothListener implements CompoundButton.OnCheckedChangeListener{
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+//                System.out.println("begin");
+                if (checkSelfPermission(BLUETOOTH) == PackageManager.PERMISSION_GRANTED) {
+                    if (userDB != null) {
+                        System.out.print(userDB.getUserName());
+                        userDB.setAcBluetooth(true);
+                        userDB.save();
+                        System.out.println("name: " + userDB.getUserName());
+                        System.out.println("status: " + userDB.getAcBluetooth());
+                    }
+                } else {
+                    AlertDialog.Builder window =new AlertDialog.Builder(SettingsActivity.this);
+                    window.setTitle("Access to Bluetooth")
+                            .setMessage("Please change your settings to authorize Bringo to access your bluetooth." +
+                                    "(in Settings - APP) ")
+                            .setPositiveButton("OK", null)
+                            .show();
+                    locationSwitch.setChecked(false);
+                }
+            } else {
+                if (userDB != null) {
+                    userDB.setAcBluetooth(false);
+                    userDB.save();
+                }
+            }
+        }
+    }
+
+    private class CalendarReminderListener implements CompoundButton.OnCheckedChangeListener{
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+//                System.out.println("begin");
+                if (checkSelfPermission(SET_ALARM) == PackageManager.PERMISSION_GRANTED) {
+                    if (userDB != null) {
+                        System.out.print(userDB.getUserName());
+                        userDB.setRmCalendar(true);
+                        userDB.save();
+                        System.out.println("name: " + userDB.getUserName());
+                        System.out.println("status: " + userDB.getRmCalendar());
+                    }
+                } else {
+                    AlertDialog.Builder window =new AlertDialog.Builder(SettingsActivity.this);
+                    window.setTitle("Access to Bluetooth")
+                            .setMessage("Please change your settings to authorize Bringo to send notifications." +
+                                    "(in Settings - APP) ")
+                            .setPositiveButton("OK", null)
+                            .show();
+                    locationSwitch.setChecked(false);
+                }
+            } else {
+                if (userDB != null) {
+                    userDB.setRmCalendar(false);
+                    userDB.save();
+                }
+            }
+        }
+    }
+
+    private class TravelReminderListener implements CompoundButton.OnCheckedChangeListener{
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+//                System.out.println("begin");
+                if (checkSelfPermission(SET_ALARM) == PackageManager.PERMISSION_GRANTED) {
+                    if (userDB != null) {
+                        System.out.print(userDB.getUserName());
+                        userDB.setRmTravel(true);
+                        userDB.save();
+                        System.out.println("name: " + userDB.getUserName());
+                        System.out.println("status: " + userDB.getRmTravel());
+                    }
+                } else {
+                    AlertDialog.Builder window =new AlertDialog.Builder(SettingsActivity.this);
+                    window.setTitle("Access to Bluetooth")
+                            .setMessage("Please change your settings to authorize Bringo to send notifications." +
+                                    "(in Settings - APP) ")
+                            .setPositiveButton("OK", null)
+                            .show();
+                    locationSwitch.setChecked(false);
+                }
+            } else {
+                if (userDB != null) {
+                    userDB.setRmTravel(false);
+                    userDB.save();
+                }
+            }
+        }
+    }
+
 
 }

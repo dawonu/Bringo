@@ -32,9 +32,12 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 /**
@@ -187,7 +190,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            String password = String.valueOf(password1.hashCode());
+            String password = SHA256password(password1);
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
@@ -201,6 +204,22 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private boolean isPasswordValid(String password) {
         return password.length() > 0;
     }
+
+    private static String SHA256password(String password) {
+        MessageDigest md;
+        try {
+            byte[] passwordByte = password.getBytes();
+            md = MessageDigest.getInstance("SHA-256");
+            byte[] digestResult = md.digest(passwordByte);
+            BigInteger bI = new BigInteger(digestResult);
+            String hashedPassword = bI.toString();
+            return hashedPassword;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     /**
      * Shows the progress UI and hides the login form.
@@ -285,6 +304,22 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 System.out.println("status = " + status);
                 if (status == 200) {
                     System.out.println("succeed!");
+
+                    //following lines are just for testing!
+                    List<UserDB> list = UserDB.listAll(UserDB.class);
+                    System.out.println("list: " + list.size());
+                    // delete all testing records from data base
+                    UserDB.deleteAll(UserDB.class);
+                    list = UserDB.listAll(UserDB.class);
+                    System.out.println("list: " + list.size());
+
+                    // register, create a new one
+                    UserDB userDB = new UserDB(mEmail);
+                    userDB.save();
+                    System.out.println("name: " + userDB.getUserName());
+                    list = UserDB.listAll(UserDB.class);
+                    System.out.println("list: " + list.size());
+
                     Intent settingsIntent = new Intent(LoginActivity.this, SettingsActivity.class);
                     LoginActivity.this.startActivity(settingsIntent);
                     return true;
