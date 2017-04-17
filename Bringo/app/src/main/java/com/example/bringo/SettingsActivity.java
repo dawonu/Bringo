@@ -1,31 +1,19 @@
 package com.example.bringo;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.example.bringo.supportingapis.GoogleGeocoding;
-import com.example.bringo.supportingapis.WeatherAPI;
-import com.example.bringo.supportingapis.YahooWeather;
-
-import org.w3c.dom.Text;
+import com.example.bringo.database.UserDB;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -43,6 +31,8 @@ public class SettingsActivity extends AppCompatActivity {
     private Switch bluetoothSwitch;
     private Switch calendarReminder;
     private Switch travelReminder;
+
+    private int mSelectedItem;
     private BottomNavigationView mBottomNav;
 
     private UserDB userDB = UserDB.listAll(UserDB.class).get(0);
@@ -56,7 +46,15 @@ public class SettingsActivity extends AppCompatActivity {
         mBottomNav = (BottomNavigationView) findViewById(R.id.nav_settings);
 
         //listener for nav item
-//        mBottomNav.setOnNavigationItemSelectedListener();
+        mBottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                System.out.println("an item is selected");
+                //function to change activity
+                navItemSelected(item, 3);
+                return true;
+            }
+        });
 
         // display the email address
         name = (TextView) findViewById(R.id.emailDisplay);
@@ -130,16 +128,15 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    private class AcCalendarListener implements CompoundButton.OnCheckedChangeListener{
+    private class AcCalendarListener implements CompoundButton.OnCheckedChangeListener {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if (isChecked) {
-
-                } else {
-
-                }
+                Intent googleCalendarIntent = new Intent(SettingsActivity.this, CalendarActivity.class);
+                SettingsActivity.this.startActivity(googleCalendarIntent);
             }
         }
+    }
 
     private class AcBluetoothListener implements CompoundButton.OnCheckedChangeListener{
         @Override
@@ -234,5 +231,44 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
+    private void navItemSelected (MenuItem item, int current) {
+
+        // update selected item
+        mSelectedItem = item.getItemId();
+
+        // uncheck the other items.
+        for (int i = 0; i< mBottomNav.getMenu().size(); i++) {
+            MenuItem menuItem = mBottomNav.getMenu().getItem(i);
+            menuItem.setChecked(menuItem.getItemId() == item.getItemId());
+            System.out.println("uncheck others: "+item.getItemId());
+        }
+
+        int a = mBottomNav.getMenu().getItem(0).getItemId();
+        int b = mBottomNav.getMenu().getItem(1).getItemId();
+        int c = mBottomNav.getMenu().getItem(2).getItemId();
+        int d = mBottomNav.getMenu().getItem(3).getItemId();
+        //change activity here
+        if(mSelectedItem == a && current != 0){
+            System.out.println("jump to HOME");
+            Intent intent0 = new Intent(this, HomeActivity.class);
+            startActivity(intent0);
+        }
+        else if (mSelectedItem == b && current != 1){
+            System.out.println("jump to TODAY'S LIST");
+            //TODO: *********change to today's list**************
+            Intent intent1 = new Intent(this, HomeActivity.class);
+            startActivity(intent1);
+        }
+        else if (mSelectedItem == c && current != 2){
+            System.out.println("jump to Tracking");
+            Intent intent2 = new Intent(this, TravelActivity.class);
+            startActivity(intent2);
+        }
+        else if (mSelectedItem == d && current != 3){
+            System.out.println("jump to SETTINGS");
+            Intent intent3 = new Intent(this, SettingsActivity.class);
+            startActivity(intent3);
+        }
+    }
 
 }

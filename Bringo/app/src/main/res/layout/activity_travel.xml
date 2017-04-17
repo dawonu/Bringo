@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:design="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.bringo.TrackActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/travel_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+    <GridView
+        android:id="@+id/travel_itemView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:numColumns="1"
+        android:layout_weight="1"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:gravity="center"
+        android:verticalSpacing="10dp"
+        android:stretchMode="columnWidth"
+        >
+    </GridView>
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/nav_travel"
+        android:layout_width="match_parent"
+
+        android:background="@color/colorBar"
+        android:layout_gravity="start"
+        android:layout_height="wrap_content"
+        design:menu="@menu/bottom_nav_items" />
+
+
+</LinearLayout>

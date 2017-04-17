@@ -1,4 +1,4 @@
-package com.example.bringo;
+package com.example.bringo.database;
 
 import com.orm.SugarRecord;
 

@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.bringo.database.UserDB;
+
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.math.BigInteger;
