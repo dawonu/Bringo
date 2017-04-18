@@ -172,6 +172,23 @@
                 android:id="@+id/switch5"
                 android:textAlignment="viewEnd" />
 
+            <TextView
+                android:text="  Bluetooth disconnect reminders"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/rmdBluetooth"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
+                android:paddingTop="20px"
+                android:textStyle="normal|bold"
+                android:background="@color/common_google_signin_btn_text_dark_default"  />
+
+            <Switch
+                android:layout_width="306dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/switch6"
+                android:textAlignment="viewEnd" />
+
             <Button
                 android:text="  Contact us"
                 android:layout_width="match_parent"

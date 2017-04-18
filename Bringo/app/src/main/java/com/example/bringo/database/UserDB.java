@@ -16,6 +16,7 @@ public class UserDB extends SugarRecord{
 
     private boolean rmCalendar;
     private boolean rmTravel;
+    private boolean rmBluetooth;
 
     public UserDB() {}
 
@@ -65,5 +66,13 @@ public class UserDB extends SugarRecord{
 
     public boolean getRmTravel() {
         return rmTravel;
+    }
+
+    public void setRmBluetooth(boolean remindStatus) {
+        rmBluetooth = remindStatus;
+    }
+
+    public boolean getRmBluetooth() {
+        return rmBluetooth;
     }
 }

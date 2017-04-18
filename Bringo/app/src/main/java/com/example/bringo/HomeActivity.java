@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -41,6 +42,7 @@ public class HomeActivity extends AppCompatActivity {
         GetScenarios gs = new GetScenarios();
         gs.getScenarioNames(ha);
     }
+
 
 
     /*
@@ -164,7 +166,7 @@ public class HomeActivity extends AppCompatActivity {
             System.out.println(sID);
             // the following code is just for notification set test
             NotificationReceiver.updateNotification("Title","Notification Content");
-            setNotificationAlarm(02, 14, 10, true);
+            setNotificationAlarm(16, 6, 50, true);
         }
     }
 

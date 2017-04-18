@@ -39,7 +39,13 @@
 
         <activity
             android:name=".LoginActivity"
-            android:label="@string/app_name" />
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <activity android:name=".CreateSceActivity" />
 
         <receiver android:name=".NotificationReceiver" />
@@ -48,16 +54,10 @@
         <activity android:name=".HomeActivity" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".TrackActivity" />
-        <activity android:name=".CalendarActivity">
-        </activity>
-        <activity android:name=".TravelActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".TrackActivity"></activity>
+        <activity android:name=".CalendarActivity"></activity>
+        <activity android:name=".TravelActivity"></activity>
+        <activity android:name=".CreateDestination1Activity"></activity>
     </application>
 
 </manifest>

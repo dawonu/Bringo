@@ -39,6 +39,7 @@ public class NotificationReceiver extends BroadcastReceiver {
             builder.setSmallIcon(R.drawable.notification);
             builder.setContentTitle(NotificationReceiver.NtfTitle);
             builder.setContentText(NotificationReceiver.NtfContent);
+
             // make notification disappear when user swipes the notification
             builder.setAutoCancel(true);
 

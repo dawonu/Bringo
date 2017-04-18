@@ -207,11 +207,11 @@ public class TravelActivity extends AppCompatActivity {
         System.out.println("set default nav item");
         MenuItem selectedItem;
         if (savedInstanceState != null) {
-            mSelectedItem = savedInstanceState.getInt(SELECTED_ITEM, 2);
+            mSelectedItem = savedInstanceState.getInt(SELECTED_ITEM, 0);
             selectedItem = mBottomNav.getMenu().findItem(mSelectedItem);
             System.out.println("maybe for currently selected item");
         } else {
-            selectedItem = mBottomNav.getMenu().getItem(2);
+            selectedItem = mBottomNav.getMenu().getItem(0);
             System.out.println("Current is null, so force to be 2");
         }
         // update selected item
@@ -271,7 +271,7 @@ public class TravelActivity extends AppCompatActivity {
         }
         else if (mSelectedItem == c && current != 2){
             System.out.println("jump to Tracking");
-            Intent intent2 = new Intent(this, TravelActivity.class);
+            Intent intent2 = new Intent(this, TrackActivity.class);
             startActivity(intent2);
         }
         else if (mSelectedItem == d && current != 3){
