@@ -37,11 +37,11 @@ public class CreateDestination1Activity extends AppCompatActivity {
     private TextView message;
     private Button next;
 
-    private int workOrLeisure;
-
     // tab part
     PlaneFragment planeFragment = new PlaneFragment();
-    private Fragment[] mFragments = new Fragment[] {planeFragment, new TrainFragment(), new CarFragment()};
+    TrainFragment trainFragment = new TrainFragment();
+    CarFragment carFragment = new CarFragment();
+    private Fragment[] mFragments = new Fragment[] {planeFragment, trainFragment, carFragment};
     private String[] mTitles = new String[]{
             "Plane", "Train", "Car"
     };
@@ -118,6 +118,10 @@ public class CreateDestination1Activity extends AppCompatActivity {
                         planeFragment.getDepartureTime());
                 dDB.addReturnFlightInfo(planeFragment.getReturnFlightNum(), planeFragment.getReturnAirport(),
                         planeFragment.getReturnTime());
+                dDB.addDepartureTrainInfo(trainFragment.getDepartureStation(), trainFragment.getDepartureTime());
+                dDB.addReturnTrainInfo(trainFragment.getReturnStation(), trainFragment.getReturnTime());
+                dDB.setDepartureCarInfo(carFragment.getDepartureTime());
+                dDB.setReturnCarInfo(carFragment.getReturnTime());
 
                 if (message.getText() != null && message.getText().length() == 0) {
                     System.out.println("HERE");
