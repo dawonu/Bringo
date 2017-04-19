@@ -61,12 +61,10 @@ public class TravelActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 System.out.println("an item is selected");
-                //function to change activity
                 navItemSelected(item, 0);
                 return true;
             }
         });
-        //set default NavItem
         setDefaultNavItem(savedInstanceState);
 
         //delete testing records from database
@@ -194,8 +192,8 @@ public class TravelActivity extends AppCompatActivity {
             Intent intent = new Intent(TravelActivity.this, CreateDestination1Activity.class);
             startActivity(intent);
 
-            itemNames.add(destinationRecord.getDestination());
-            itemView.setAdapter(new travelGridAdapter(getApplicationContext(), itemNames));
+//            itemNames.add(destinationRecord.getDestination());
+//            itemView.setAdapter(new travelGridAdapter(getApplicationContext(), itemNames));
         }
 
     }
