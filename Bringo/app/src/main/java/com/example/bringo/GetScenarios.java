@@ -56,6 +56,8 @@ public class GetScenarios {
                     JSONObject responseJson = new JSONObject(responseStr);
                     String sceName = responseJson.getString(String.valueOf(sID));
                     names.add(sceName);
+                    ds.setName(sceName);
+                    ds.save();
                     Log.d("debugging names list", sceName);
                 }catch(JSONException e) {
                     e.printStackTrace();

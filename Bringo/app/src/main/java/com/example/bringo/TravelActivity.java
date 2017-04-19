@@ -56,7 +56,6 @@ public class TravelActivity extends AppCompatActivity {
 
         //set bottom bar selection
         mBottomNav = (BottomNavigationView) findViewById(R.id.nav_travel);
-
         //listener for nav item
         mBottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -67,12 +66,11 @@ public class TravelActivity extends AppCompatActivity {
                 return true;
             }
         });
-
         //set default NavItem
         setDefaultNavItem(savedInstanceState);
 
         //delete testing records from database
-        trackerDB.deleteAll(DestinationDB.class);
+        DestinationDB.deleteAll(DestinationDB.class);
 
         //retrieve data from database
         destinationDBList = DestinationDB.listAll(DestinationDB.class);
@@ -114,8 +112,7 @@ public class TravelActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            // add an add button image to position 0
-            if(position < getCount() -1 ){
+            if(position < getCount() - 1 ){
                 Button itemButton;
                 if(convertView == null){
                     System.out.println("convertView == null, get View for position: "+ position);
@@ -192,12 +189,13 @@ public class TravelActivity extends AppCompatActivity {
             DestinationDB destinationRecord = new DestinationDB();
             destinationRecord.save();
             System.out.println("entry 1 saved");
+
             destinationDBList.add(destinationRecord);
+            Intent intent = new Intent(TravelActivity.this, CreateDestination1Activity.class);
+            startActivity(intent);
 
             itemNames.add(destinationRecord.getDestination());
-
             itemView.setAdapter(new travelGridAdapter(getApplicationContext(), itemNames));
-
         }
 
     }

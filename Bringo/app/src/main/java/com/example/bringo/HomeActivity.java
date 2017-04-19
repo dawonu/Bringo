@@ -11,12 +11,14 @@ import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.List;
@@ -25,6 +27,14 @@ public class HomeActivity extends AppCompatActivity {
     private final static int DEFAULT_SCENARIOS_COUNT = 6;
     private GridView gridView;
     private Toolbar myToolbar;
+    private Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            Intent intent = new Intent(HomeActivity.this, ScenarioAlarmActivity.class);
+            startActivity(intent);
+            return true;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +45,8 @@ public class HomeActivity extends AppCompatActivity {
         myToolbar = (Toolbar) findViewById(R.id.home_toolbar);
         myToolbar.setTitle("Home");
         setSupportActionBar(myToolbar);
+        myToolbar.setOnMenuItemClickListener(onMenuItemClick);
+
 
         final HomeActivity ha = this;
         // initialize the default scenarios db
@@ -199,7 +211,11 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // to make the Toolbar has the functionality of Menu，do not delete
+        getMenuInflater().inflate(R.menu.top_bar_alarm, menu);
+        return true;
+    }
 
 
 }
