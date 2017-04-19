@@ -68,7 +68,7 @@ public class TravelActivity extends AppCompatActivity {
         setDefaultNavItem(savedInstanceState);
 
         //delete testing records from database
-        DestinationDB.deleteAll(DestinationDB.class);
+//        DestinationDB.deleteAll(DestinationDB.class);
 
         //retrieve data from database
         destinationDBList = DestinationDB.listAll(DestinationDB.class);
@@ -76,7 +76,7 @@ public class TravelActivity extends AppCompatActivity {
         itemNames = new ArrayList<>();
 
         for(DestinationDB entry : destinationDBList){
-            itemNames.add(entry.getDestination());
+            itemNames.add(entry.getDestination()+"\n"+entry.getDepartureDate()+" - "+entry.getReturnDate());
         }
 
         //populate gridview using data from database
