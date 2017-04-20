@@ -106,6 +106,7 @@ public class TrackActivity extends AppCompatActivity {
         //delete testing records from database
         trackerDB.deleteAll(trackerDB.class);
 
+
         //retrieve data from database
 
         recordsDBList = trackerDB.listAll(trackerDB.class);
@@ -167,7 +168,7 @@ public class TrackActivity extends AppCompatActivity {
                 itemButton.setBackgroundColor(Color.LTGRAY);
                 itemButton.setId(position);
 
-                int trackerID = recordsDBList.get(position).getID();
+                int trackerID = recordsDBList.get(position).getItemID();
                 //add onClickListener
                 itemButton.setOnClickListener(new trackerOnClickListener(trackerID));
                 return itemButton;
@@ -210,6 +211,7 @@ public class TrackActivity extends AppCompatActivity {
             // the following code is just for test!!!
             v.setBackgroundColor(Color.BLUE);
             System.out.println(ID+ "clicked");
+            //TODO: check BT permission and send signal to Arduino 
         }
     }
 
@@ -223,7 +225,7 @@ public class TrackActivity extends AppCompatActivity {
             // the following code is just for test!!!
             v.setBackgroundColor(Color.BLUE);
             System.out.println("add clicked");
-
+            // Just for testing
             trackerDB trackerRecord = new trackerDB(1994,"key","1234", false);
             trackerRecord.save();
             System.out.println("entry 1 saved");
@@ -232,7 +234,7 @@ public class TrackActivity extends AppCompatActivity {
             itemNames.add(trackerRecord.getName());
 
             itemView.setAdapter(new trackerGridAdapter(getApplicationContext(), itemNames));
-
+            //TODO: change to add activity
 
         }
 
@@ -280,19 +282,9 @@ public class TrackActivity extends AppCompatActivity {
     private Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
-            ///////////////////////////////////////////change to jump to other activity
-            String msg = "";
-            switch (menuItem.getItemId()) {
-                case R.id.action_track_edit:
-                    msg += "Click edit";
-                    break;
-
-            }
-
-            if(!msg.equals("")) {
-                Toast.makeText(TrackActivity.this, msg, Toast.LENGTH_SHORT).show();
-            }
-            ////////////////////////////////////////////
+            System.out.println("Edit clicked, about to change activity");
+            Intent intent = new Intent(getApplicationContext(), TrackEdit1Activity.class);
+            startActivity(intent);
             return true;
         }
     };
