@@ -50,17 +50,24 @@
         </activity>
         <activity android:name=".SettingsActivity" />
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".TrackActivity" />
+        <activity android:name=".TrackActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+
         <activity android:name=".CalendarActivity" />
         <activity android:name=".TravelActivity" >
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
         </activity>
         <activity android:name=".CreateDestination1Activity" />
         <activity android:name=".ScenarioAlarmActivity"></activity>
+        <activity android:name=".TrackEdit1Activity" />
+        <activity android:name=".TrackEdit2Activity" />
+        <activity android:name=".TrackEdit3Activity" />
     </application>
 
 </manifest>

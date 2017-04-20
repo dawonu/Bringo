@@ -4,9 +4,9 @@ import com.orm.SugarRecord;
 
 public class trackerDB extends SugarRecord{
 
-    private int id;
-    private String tagName;
-    private String pass;
+    public int itemID;
+    public String tagName;
+    public String pass;
     private boolean forgetReminder;
 
     public trackerDB(){
@@ -14,14 +14,14 @@ public class trackerDB extends SugarRecord{
     }
 
     public trackerDB(int id, String name, String pwd, boolean forgetReminder){
-        this.id = id;
+        this.itemID = id;
         this.tagName = name;
         this.pass = pwd;
         this.forgetReminder = forgetReminder;
     }
 
-    public int getID(){
-        return this.id;
+    public int getItemID(){
+        return this.itemID;
     }
 
     public String getName(){
@@ -36,4 +36,16 @@ public class trackerDB extends SugarRecord{
         return this.forgetReminder;
     }
 
+    public void changeID(int ID){
+        this.itemID = ID;
+    }
+    public void changeName(String name){
+        this.tagName = name;
+    }
+    public void changePwd(String pwd) {
+        this.pass = pwd;
+    }
+    public void changeForgetReminder(boolean reminder){
+        this.forgetReminder = reminder;
+    }
 }
