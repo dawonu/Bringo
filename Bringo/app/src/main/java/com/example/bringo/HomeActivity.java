@@ -17,6 +17,8 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.example.bringo.database.CheckedItemsDB;
+
 import java.util.Calendar;
 import java.util.List;
 
@@ -94,9 +96,25 @@ public class HomeActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            // add an add button image to position 0
+            // add an add sign "+" to position 0
             if(position==0){
+                Button addButton;
+                if (convertView == null) {
+                    addButton = new Button(context);
+                    addButton.setLayoutParams(new GridView.LayoutParams(550, 280));
+                    addButton.setPadding(8, 8, 8, 8);
+                } else {
+                    addButton = (Button) convertView;
+                }
+                addButton.setText("+");
+                addButton.setTextSize(40);
+                addButton.setBackgroundColor(Color.LTGRAY);
+                addButton.setId(position);
+                // set OnClickLinstener for each item on the grid view
+                addButton.setOnClickListener(new AddScenarioOnClickListener(position));
+                return addButton;
 
+             /*
                 ImageView addImage;
                 if(convertView == null) {
                     addImage = new ImageView(context);
@@ -110,14 +128,14 @@ public class HomeActivity extends AppCompatActivity {
                 addImage.setBackgroundColor(Color.LTGRAY);
                 // set OnClickListener for the add button
                 addImage.setOnClickListener(new AddScenarioOnClickListener(position));
-                return addImage;
+                return addImage;*/
             }
             // add scenario names to other positions
             else {
                 Button sceButton;
                 if (convertView == null) {
                     sceButton = new Button(context);
-                    sceButton.setLayoutParams(new GridView.LayoutParams(450, 280));
+                    sceButton.setLayoutParams(new GridView.LayoutParams(550, 280));
                     sceButton.setPadding(8, 8, 8, 8);
                 } else {
                     sceButton = (Button) convertView;
@@ -144,8 +162,12 @@ public class HomeActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             // the following code is just for test!!!
-            v.setBackgroundColor(Color.BLUE);
             System.out.println(sID);
+
+            // jump to the selected default scenario
+            Intent intent = new Intent(HomeActivity.this,DefaultListActivity.class);
+            intent.putExtra("sID",String.valueOf(sID));
+            startActivity(intent);
         }
     }
 

@@ -9,11 +9,12 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by xuyidi on 4/4/17.
@@ -56,7 +57,8 @@ public class GetScenarios {
                     JSONObject responseJson = new JSONObject(responseStr);
                     String sceName = responseJson.getString(String.valueOf(sID));
                     names.add(sceName);
-                    Log.d("debugging names list", sceName);
+                    ds.setName(sceName);
+                    ds.save();
                 }catch(JSONException e) {
                     e.printStackTrace();
                 }
@@ -74,11 +76,11 @@ public class GetScenarios {
         private String doGet(String sID){
             int status;
             StringBuilder responseSB = new StringBuilder("");;
-            HttpURLConnection conn;
+            HttpsURLConnection conn;
             try{
                 // send GET request
                 URL url = new URL("https://morning-waters-80123.herokuapp.com/getScenarioNameByID?ID="+sID);
-                conn = (HttpURLConnection) url.openConnection();
+                conn = (HttpsURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
 
                 // read response
