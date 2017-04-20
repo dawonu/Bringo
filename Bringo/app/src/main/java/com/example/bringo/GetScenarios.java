@@ -59,6 +59,9 @@ public class GetScenarios {
                     names.add(sceName);
                     ds.setName(sceName);
                     ds.save();
+
+                    Log.d("debugging names list", sceName);
+
                 }catch(JSONException e) {
                     e.printStackTrace();
                 }

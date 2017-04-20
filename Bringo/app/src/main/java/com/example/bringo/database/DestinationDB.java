@@ -77,7 +77,7 @@ public class DestinationDB extends SugarRecord{
     }
     public String getDepartureDate() {
         if (departureDate == null) {
-            return null;
+            return "--/--";
         }
         return departureDate.get(Calendar.MONTH) + 1 + "/" + departureDate.get(Calendar.DAY_OF_MONTH);
     }
@@ -101,7 +101,7 @@ public class DestinationDB extends SugarRecord{
     }
     public String getReturnDate() {
         if (returnDate == null) {
-            return null;
+            return "--/--";
         }
         return returnDate.get(Calendar.MONTH) + 1 + "/" + returnDate.get(Calendar.DAY_OF_MONTH);
     }

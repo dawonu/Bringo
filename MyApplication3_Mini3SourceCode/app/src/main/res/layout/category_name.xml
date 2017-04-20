@@ -9,6 +9,6 @@
         android:id="@+id/item1"  
         android:layout_width="fill_parent"  
         android:layout_height="30dip"  
-        android:gravity="center_vertical" />  
-  
-</LinearLayout>  
+        android:gravity="center_vertical" />
+
+</LinearLayout>

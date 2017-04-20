@@ -56,23 +56,19 @@ public class TravelActivity extends AppCompatActivity {
 
         //set bottom bar selection
         mBottomNav = (BottomNavigationView) findViewById(R.id.nav_travel);
-
         //listener for nav item
         mBottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 System.out.println("an item is selected");
-                //function to change activity
                 navItemSelected(item, 0);
                 return true;
             }
         });
-
-        //set default NavItem
         setDefaultNavItem(savedInstanceState);
 
         //delete testing records from database
-        trackerDB.deleteAll(DestinationDB.class);
+//        DestinationDB.deleteAll(DestinationDB.class);
 
         //retrieve data from database
         destinationDBList = DestinationDB.listAll(DestinationDB.class);
@@ -80,7 +76,7 @@ public class TravelActivity extends AppCompatActivity {
         itemNames = new ArrayList<>();
 
         for(DestinationDB entry : destinationDBList){
-            itemNames.add(entry.getDestination());
+            itemNames.add(entry.getDestination()+"\n"+entry.getDepartureDate()+" - "+entry.getReturnDate());
         }
 
         //populate gridview using data from database
@@ -114,8 +110,7 @@ public class TravelActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            // add an add button image to position 0
-            if(position < getCount() -1 ){
+            if(position < getCount() - 1 ){
                 Button itemButton;
                 if(convertView == null){
                     System.out.println("convertView == null, get View for position: "+ position);
@@ -192,12 +187,13 @@ public class TravelActivity extends AppCompatActivity {
             DestinationDB destinationRecord = new DestinationDB();
             destinationRecord.save();
             System.out.println("entry 1 saved");
+
             destinationDBList.add(destinationRecord);
+            Intent intent = new Intent(TravelActivity.this, CreateDestination1Activity.class);
+            startActivity(intent);
 
-            itemNames.add(destinationRecord.getDestination());
-
-            itemView.setAdapter(new travelGridAdapter(getApplicationContext(), itemNames));
-
+//            itemNames.add(destinationRecord.getDestination());
+//            itemView.setAdapter(new travelGridAdapter(getApplicationContext(), itemNames));
         }
 
     }
@@ -207,11 +203,11 @@ public class TravelActivity extends AppCompatActivity {
         System.out.println("set default nav item");
         MenuItem selectedItem;
         if (savedInstanceState != null) {
-            mSelectedItem = savedInstanceState.getInt(SELECTED_ITEM, 2);
+            mSelectedItem = savedInstanceState.getInt(SELECTED_ITEM, 0);
             selectedItem = mBottomNav.getMenu().findItem(mSelectedItem);
             System.out.println("maybe for currently selected item");
         } else {
-            selectedItem = mBottomNav.getMenu().getItem(2);
+            selectedItem = mBottomNav.getMenu().getItem(0);
             System.out.println("Current is null, so force to be 2");
         }
         // update selected item
@@ -271,7 +267,7 @@ public class TravelActivity extends AppCompatActivity {
         }
         else if (mSelectedItem == c && current != 2){
             System.out.println("jump to Tracking");
-            Intent intent2 = new Intent(this, TravelActivity.class);
+            Intent intent2 = new Intent(this, TrackActivity.class);
             startActivity(intent2);
         }
         else if (mSelectedItem == d && current != 3){

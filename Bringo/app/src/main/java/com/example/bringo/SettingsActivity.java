@@ -31,8 +31,10 @@ public class SettingsActivity extends AppCompatActivity {
     private Switch bluetoothSwitch;
     private Switch calendarReminder;
     private Switch travelReminder;
+    private Switch bluetoothReminder;
 
     private int mSelectedItem;
+    private static final String SELECTED_ITEM = "arg_selected_item";
     private BottomNavigationView mBottomNav;
 
     private UserDB userDB = UserDB.listAll(UserDB.class).get(0);
@@ -55,6 +57,7 @@ public class SettingsActivity extends AppCompatActivity {
                 return true;
             }
         });
+        setDefaultNavItem(savedInstanceState);
 
         // display the email address
         name = (TextView) findViewById(R.id.emailDisplay);
@@ -77,6 +80,9 @@ public class SettingsActivity extends AppCompatActivity {
 
         travelReminder = (Switch) findViewById(R.id.switch5);
         travelReminder.setOnCheckedChangeListener(new TravelReminderListener());
+
+        bluetoothReminder = (Switch) findViewById(R.id.switch6);
+        bluetoothReminder.setOnCheckedChangeListener(new BluetoothReminderListener());
 
         // asking for access
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
@@ -184,7 +190,7 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                 } else {
                     AlertDialog.Builder window =new AlertDialog.Builder(SettingsActivity.this);
-                    window.setTitle("Access to Bluetooth")
+                    window.setTitle("Access to Google Calendar")
                             .setMessage("Please change your settings to authorize Bringo to send notifications." +
                                     "(in Settings - APP) ")
                             .setPositiveButton("OK", null)
@@ -215,7 +221,7 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                 } else {
                     AlertDialog.Builder window =new AlertDialog.Builder(SettingsActivity.this);
-                    window.setTitle("Access to Bluetooth")
+                    window.setTitle("Access to Notifications")
                             .setMessage("Please change your settings to authorize Bringo to send notifications." +
                                     "(in Settings - APP) ")
                             .setPositiveButton("OK", null)
@@ -228,6 +234,58 @@ public class SettingsActivity extends AppCompatActivity {
                     userDB.save();
                 }
             }
+        }
+    }
+
+    private class BluetoothReminderListener implements CompoundButton.OnCheckedChangeListener{
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+//                System.out.println("begin");
+                if (checkSelfPermission(SET_ALARM) == PackageManager.PERMISSION_GRANTED) {
+                    if (userDB != null) {
+                        System.out.print(userDB.getUserName());
+                        userDB.setRmBluetooth(true);
+                        userDB.save();
+                        System.out.println("name: " + userDB.getUserName());
+                        System.out.println("status: " + userDB.getRmBluetooth());
+                    }
+                } else {
+                    AlertDialog.Builder window =new AlertDialog.Builder(SettingsActivity.this);
+                    window.setTitle("Access to Notifications")
+                            .setMessage("Please change your settings to authorize Bringo to send notifications." +
+                                    "(in Settings - APP) ")
+                            .setPositiveButton("OK", null)
+                            .show();
+                    locationSwitch.setChecked(false);
+                }
+            } else {
+                if (userDB != null) {
+                    userDB.setRmBluetooth(false);
+                    userDB.save();
+                }
+            }
+        }
+    }
+
+    private void setDefaultNavItem( Bundle savedInstanceState ){
+        System.out.println("set default nav item");
+        MenuItem selectedItem;
+        if (savedInstanceState != null) {
+            mSelectedItem = savedInstanceState.getInt(SELECTED_ITEM, 3);
+            selectedItem = mBottomNav.getMenu().findItem(mSelectedItem);
+            System.out.println("maybe for currently selected item");
+        } else {
+            selectedItem = mBottomNav.getMenu().getItem(3);
+            System.out.println("Current is null, so force to be 2");
+        }
+        // update selected item
+        mSelectedItem = selectedItem.getItemId();
+
+        // uncheck the other items.
+        for (int i = 0; i< mBottomNav.getMenu().size(); i++) {
+            MenuItem menuItem = mBottomNav.getMenu().getItem(i);
+            menuItem.setChecked(menuItem.getItemId() == selectedItem.getItemId());
         }
     }
 
@@ -261,7 +319,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
         else if (mSelectedItem == c && current != 2){
             System.out.println("jump to Tracking");
-            Intent intent2 = new Intent(this, TravelActivity.class);
+            Intent intent2 = new Intent(this, TrackActivity.class);
             startActivity(intent2);
         }
         else if (mSelectedItem == d && current != 3){

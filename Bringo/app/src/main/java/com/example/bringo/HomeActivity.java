@@ -9,7 +9,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -17,7 +18,9 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-import com.example.bringo.database.CheckedItemsDB;
+
+import com.example.bringo.database.ScenarioAlarmDB;
+
 
 import java.util.Calendar;
 import java.util.List;
@@ -26,6 +29,14 @@ public class HomeActivity extends AppCompatActivity {
     private final static int DEFAULT_SCENARIOS_COUNT = 6;
     private GridView gridView;
     private Toolbar myToolbar;
+    private Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            Intent intent = new Intent(HomeActivity.this, SetAlarmActivity.class);
+            startActivity(intent);
+            return true;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +47,8 @@ public class HomeActivity extends AppCompatActivity {
         myToolbar = (Toolbar) findViewById(R.id.home_toolbar);
         myToolbar.setTitle("Home");
         setSupportActionBar(myToolbar);
+        myToolbar.setOnMenuItemClickListener(onMenuItemClick);
+
 
         final HomeActivity ha = this;
         // initialize the default scenarios db
@@ -45,14 +58,18 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
+
     /*
      * initialDefaultScenarioDB() adds default scenario IDs into the DefaultScenario Database
      */
     private void initialDefaultScenariosDB(){
         DefaultScenarios.deleteAll(DefaultScenarios.class);
+        ScenarioAlarmDB.deleteAll(ScenarioAlarmDB.class);
         for(int i=1;i<=DEFAULT_SCENARIOS_COUNT;i++){
             DefaultScenarios defaultSce = new DefaultScenarios(i);
             defaultSce.save();
+            ScenarioAlarmDB defaultAlarm = new ScenarioAlarmDB(i);
+            defaultAlarm.save();
         }
     }
 
@@ -186,7 +203,7 @@ public class HomeActivity extends AppCompatActivity {
             System.out.println(sID);
             // the following code is just for notification set test
             NotificationReceiver.updateNotification("Title","Notification Content");
-            setNotificationAlarm(02, 14, 10, true);
+            setNotificationAlarm(16, 6, 50, true);
         }
     }
 
@@ -219,7 +236,11 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // to make the Toolbar has the functionality of Menu，do not delete
+        getMenuInflater().inflate(R.menu.top_bar_alarm, menu);
+        return true;
+    }
 
 
 }
