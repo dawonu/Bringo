@@ -39,14 +39,18 @@
 
         <activity
             android:name=".LoginActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:label="@string/app_name"></activity>
         <activity android:name=".CreateSceActivity" />
 
         <receiver android:name=".NotificationReceiver" />
 
         <!-- Set HomeActivity as the launcher page -->
-        <activity android:name=".HomeActivity" >
+        <activity android:name=".HomeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity android:name=".SettingsActivity" />
         <activity android:name=".RegisterActivity" />
@@ -60,14 +64,18 @@
 
 
         <activity android:name=".CalendarActivity" />
+
         <activity android:name=".TravelActivity" >
 
         </activity>
         <activity android:name=".CreateDestination1Activity" />
-        <activity android:name=".ScenarioAlarmActivity"></activity>
+        
         <activity android:name=".TrackEdit1Activity" />
         <activity android:name=".TrackEdit2Activity" />
         <activity android:name=".TrackEdit3Activity" />
+        <activity android:name=".EditAlarmActivity" />
+        <activity android:name=".SetAlarmActivity"></activity>
+
     </application>
 
 </manifest>

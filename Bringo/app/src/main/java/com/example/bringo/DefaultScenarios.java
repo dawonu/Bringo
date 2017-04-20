@@ -1,5 +1,6 @@
 package com.example.bringo;
 
+import com.example.bringo.database.ScenarioAlarmDB;
 import com.orm.SugarRecord;
 
 /**
@@ -10,6 +11,8 @@ public class DefaultScenarios extends SugarRecord {
     int scenarioID;
 
     private String name;
+
+    private ScenarioAlarmDB alarm;
 
     public DefaultScenarios(){
     }
@@ -28,6 +31,13 @@ public class DefaultScenarios extends SugarRecord {
 
     public String getName() {
         return name;
+    }
+
+    public ScenarioAlarmDB getAlarm() {
+        if (alarm == null) {
+            alarm = new ScenarioAlarmDB();
+        }
+        return alarm;
     }
 
 }

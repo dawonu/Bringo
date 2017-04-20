@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +17,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.List;
@@ -30,7 +28,7 @@ public class HomeActivity extends AppCompatActivity {
     private Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
-            Intent intent = new Intent(HomeActivity.this, ScenarioAlarmActivity.class);
+            Intent intent = new Intent(HomeActivity.this, SetAlarmActivity.class);
             startActivity(intent);
             return true;
         }
