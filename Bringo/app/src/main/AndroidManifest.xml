@@ -45,19 +45,20 @@
         <receiver android:name=".NotificationReceiver" />
 
         <!-- Set HomeActivity as the launcher page -->
-        <activity android:name=".HomeActivity" />
-        <activity android:name=".SettingsActivity" />
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".TrackActivity" />
-        <activity android:name=".CalendarActivity">
-        </activity>
-        <activity android:name=".TravelActivity">
+        <activity android:name=".HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".SettingsActivity" />
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".TrackActivity" />
+        <activity android:name=".CalendarActivity" />
+        <activity android:name=".TravelActivity" />
+        <activity android:name=".DefaultListActivity"
+            android:windowSoftInputMode="stateHidden"></activity>
     </application>
 
 </manifest>
