@@ -12,8 +12,6 @@ public class DefaultScenarios extends SugarRecord {
 
     private String name;
 
-    private ScenarioAlarmDB alarm;
-
     public DefaultScenarios(){
     }
 
@@ -31,13 +29,6 @@ public class DefaultScenarios extends SugarRecord {
 
     public String getName() {
         return name;
-    }
-
-    public ScenarioAlarmDB getAlarm() {
-        if (alarm == null) {
-            alarm = new ScenarioAlarmDB();
-        }
-        return alarm;
     }
 
 }

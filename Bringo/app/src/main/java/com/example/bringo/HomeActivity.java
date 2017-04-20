@@ -18,6 +18,8 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.example.bringo.database.ScenarioAlarmDB;
+
 import java.util.Calendar;
 import java.util.List;
 
@@ -60,9 +62,12 @@ public class HomeActivity extends AppCompatActivity {
      */
     private void initialDefaultScenariosDB(){
         DefaultScenarios.deleteAll(DefaultScenarios.class);
+        ScenarioAlarmDB.deleteAll(ScenarioAlarmDB.class);
         for(int i=1;i<=DEFAULT_SCENARIOS_COUNT;i++){
             DefaultScenarios defaultSce = new DefaultScenarios(i);
             defaultSce.save();
+            ScenarioAlarmDB defaultAlarm = new ScenarioAlarmDB(i);
+            defaultAlarm.save();
         }
     }
 

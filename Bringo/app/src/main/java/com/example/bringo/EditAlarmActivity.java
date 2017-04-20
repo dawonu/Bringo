@@ -1,11 +1,14 @@
 package com.example.bringo;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
@@ -15,22 +18,27 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.example.bringo.database.DestinationDB;
 import com.example.bringo.database.ScenarioAlarmDB;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
 public class EditAlarmActivity extends AppCompatActivity {
 
     private Toolbar myToolbar;
+    private Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            Intent intent = new Intent(EditAlarmActivity.this, SetAlarmActivity.class);
+            startActivity(intent);
+            return true;
+        }
+    };
     private ExpandableListView expandableListView;
     private AlertDialog dialog;
     private ScenarioAlarmDB tmpDB;
@@ -47,13 +55,13 @@ public class EditAlarmActivity extends AppCompatActivity {
         myToolbar = (Toolbar) findViewById(R.id.travel_toolbar);
         myToolbar.setTitle("Edit Alarms");
         setSupportActionBar(myToolbar);
+        myToolbar.setOnMenuItemClickListener(onMenuItemClick);
 
         expandableListView = (ExpandableListView) findViewById(R.id.elv);
 
         group = DefaultScenarios.listAll(DefaultScenarios.class);
-        children = new LinkedList<>();
+        children = ScenarioAlarmDB.listAll(ScenarioAlarmDB.class);
         for(DefaultScenarios ds: group) {
-            children.add(ds.getAlarm());
             if(ds.getName() != null) {
                 defaultScenarioNames.add(ds.getName());
             }
@@ -63,14 +71,20 @@ public class EditAlarmActivity extends AppCompatActivity {
         expandableListView.setAdapter(adapter);
     }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // to make the Toolbar has the functionality of Menu，do not delete
+        getMenuInflater().inflate(R.menu.top_bar_back, menu);
+        return true;
+    }
+
     private class AlarmExpandableListAdapter extends BaseExpandableListAdapter {
 
         private Context context;
         private LayoutInflater inflater;
 
         public AlarmExpandableListAdapter(Context context) {
-                this.context = context;
-                inflater = LayoutInflater.from(context);
+            this.context = context;
+            inflater = LayoutInflater.from(context);
         }
 
         @Override
