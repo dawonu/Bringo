@@ -176,12 +176,13 @@ public class TrackEdit2Activity extends AppCompatActivity {
                     TextView inputBox = (EditText)view.findViewById(R.id.newname);
                     String newName = inputBox.getText().toString();
                     System.out.println("new name is :"+newName);
+                    if(!newName.equals("")) {
+                        clickedItem.changeName(newName);
+                        clickedItem.save();
+                        System.out.println("now the new name of the clicked item is" + clickedItem.getName());
 
-                    clickedItem.changeName(newName);
-                    clickedItem.save();
-                    System.out.println("now the new name of the clicked item is" + clickedItem.getName());
-
-                    button.setText(newName);
+                        button.setText(newName);
+                    }
                 }
             });
             alertDialogBuilder.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
