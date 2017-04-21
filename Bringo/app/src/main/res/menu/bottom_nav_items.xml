@@ -15,7 +15,7 @@
 
     <item
         android:id="@+id/menu_track"
-        android:title="Track items"
+        android:title="Tracker"
         android:icon="@drawable/track" />
 
     <item

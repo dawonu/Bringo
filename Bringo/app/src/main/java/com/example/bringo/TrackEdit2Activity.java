@@ -126,7 +126,7 @@ public class TrackEdit2Activity extends AppCompatActivity {
                 if(convertView == null){
                     System.out.println("convertView == null, get View for position: "+ position);
                     itemButton = new Button(context);
-                    itemButton.setLayoutParams(new GridView.LayoutParams(900,150));
+                    itemButton.setLayoutParams(new GridView.LayoutParams(1200,150));
                     itemButton.setPadding(8,8,8,8);
                 }
                 else{
@@ -175,6 +175,7 @@ public class TrackEdit2Activity extends AppCompatActivity {
 
                     TextView inputBox = (EditText)view.findViewById(R.id.newname);
                     String newName = inputBox.getText().toString();
+                    String oldNme = button.getText().toString();
                     System.out.println("new name is :"+newName);
                     if(!newName.equals("")) {
                         clickedItem.changeName(newName);
@@ -182,6 +183,10 @@ public class TrackEdit2Activity extends AppCompatActivity {
                         System.out.println("now the new name of the clicked item is" + clickedItem.getName());
 
                         button.setText(newName);
+                        itemNames.remove(oldNme);
+                        itemNames.add(newName);
+                        itemView.setAdapter(new trackerGridAdapter(context, itemNames));
+                        System.out.println("changed text on button");
                     }
                 }
             });

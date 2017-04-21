@@ -1,6 +1,8 @@
 package com.example.bringo;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -18,6 +20,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.GridView;
 import android.widget.Toast;
+
+import com.example.bringo.database.UserDB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +44,8 @@ public class TrackEdit1Activity extends AppCompatActivity {
     private List<trackerDB> recordsDBList;
 
     private List<String> itemNames;
+
+    private UserDB userDB = UserDB.listAll(UserDB.class).get(0);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -121,7 +127,7 @@ public class TrackEdit1Activity extends AppCompatActivity {
                 if(convertView == null){
                     System.out.println("convertView == null, get View for position: "+ position);
                     itemButton = new CheckBox(context);
-                    itemButton.setLayoutParams(new GridView.LayoutParams(900,150));
+                    itemButton.setLayoutParams(new GridView.LayoutParams(1200,150));
                     itemButton.setPadding(8,8,8,8);
                 }
                 else{
@@ -148,7 +154,7 @@ public class TrackEdit1Activity extends AppCompatActivity {
 
             System.out.println("*******status of the clicked item is "+clickedItem.getForgetReminder());
                 //add onClickListener
-                itemButton.setOnClickListener(new trackerOnClickListener(trackerID));
+                itemButton.setOnClickListener(new trackerOnClickListener(trackerID, context));
                 return itemButton;
 
         }
@@ -157,26 +163,73 @@ public class TrackEdit1Activity extends AppCompatActivity {
     //listener for tracker
     private class trackerOnClickListener implements View.OnClickListener{
         int ID;
-        public trackerOnClickListener(int sID){
+        Context context;
+        public trackerOnClickListener(int sID, Context context){
             this.ID = sID;
+            this.context = context;
         }
         @Override
         public void onClick(View v) {
 
             boolean checked = ((CheckBox) v).isChecked();
-            System.out.println("In OnClickListener, the item is checked: "+ checked);
-            // the following code is just for test!!!
+            if(checked) {
+                if(userDB.getRmBluetooth()){
+                    System.out.println("In OnClickListener, the item is checked: " + checked);
+                    // the following code is just for test!!!
 
-            //TODO: change database information
-            String tagName = ((CheckBox) v).getText().toString();
-            System.out.println(((CheckBox) v).getText().toString());
+                    //TODO: change database information
+                    String tagName = ((CheckBox) v).getText().toString();
+                    System.out.println(tagName);
 
-            List<trackerDB> clickedItemList = trackerDB.find(trackerDB.class, "item_id=?", Integer.toString(ID));
-            System.out.println("there are "+ clickedItemList.size() + " items in the database with id == "+ ID);
-            trackerDB clickedItem = clickedItemList.get(0);
-            clickedItem.changeForgetReminder(checked);
-            clickedItem.save();
-            System.out.println("now the reminder status of the clicked item is "+clickedItem.getForgetReminder());
+                    List<trackerDB> clickedItemList = trackerDB.find(trackerDB.class, "item_id=?", Integer.toString(ID));
+                    System.out.println("there are " + clickedItemList.size() + " items in the database with id == " + ID);
+                    trackerDB clickedItem = clickedItemList.get(0);
+                    clickedItem.changeForgetReminder(checked);
+                    clickedItem.save();
+                    System.out.println("now the reminder status of the clicked item is " + clickedItem.getForgetReminder());
+                }
+                else{
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                    alertDialogBuilder.setTitle("Permission for Bluetooth disconnect reminders needed");
+                    alertDialogBuilder.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                            Intent intent = new Intent(context, SettingsActivity.class);
+                            startActivity(intent);
+
+
+                        }
+                    });
+                    alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // if this button is clicked, just close
+                            // the dialog box and do nothing
+                            dialog.cancel();
+                        }
+                    });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+
+                    // show it
+                    alertDialog.show();
+
+                    ((CheckBox) v).setChecked(false);
+                }
+            }
+            else {
+                System.out.println("In OnClickListener, the item is checked: " + checked);
+                // the following code is just for test!!!
+
+                //TODO: change database information
+                String tagName = ((CheckBox) v).getText().toString();
+                System.out.println(tagName);
+
+                List<trackerDB> clickedItemList = trackerDB.find(trackerDB.class, "item_id=?", Integer.toString(ID));
+                System.out.println("there are " + clickedItemList.size() + " items in the database with id == " + ID);
+                trackerDB clickedItem = clickedItemList.get(0);
+                clickedItem.changeForgetReminder(checked);
+                clickedItem.save();
+                System.out.println("now the reminder status of the clicked item is " + clickedItem.getForgetReminder());
+            }
         }
     }
 

@@ -124,7 +124,7 @@ public class TrackEdit3Activity extends AppCompatActivity {
                 if(convertView == null){
                     System.out.println("convertView == null, get View for position: "+ position);
                     itemButton = new Button(context);
-                    itemButton.setLayoutParams(new GridView.LayoutParams(900,150));
+                    itemButton.setLayoutParams(new GridView.LayoutParams(1200,150));
                     itemButton.setPadding(8,8,8,8);
                 }
                 else{

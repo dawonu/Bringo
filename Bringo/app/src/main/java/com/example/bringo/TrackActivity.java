@@ -1,11 +1,15 @@
 package com.example.bringo;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,10 +26,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.bringo.database.UserDB;
+
 import java.util.*;
+
 
 /**
  * Created by alisonwang on 4/14/17.
@@ -46,6 +56,8 @@ public class TrackActivity extends AppCompatActivity {
     private List<trackerDB> recordsDBList;
 
     private List<String> itemNames;
+
+    private UserDB userDB = UserDB.listAll(UserDB.class).get(0);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -104,7 +116,7 @@ public class TrackActivity extends AppCompatActivity {
 */
 
         //delete testing records from database
-        trackerDB.deleteAll(trackerDB.class);
+        //trackerDB.deleteAll(trackerDB.class);
 
 
         //retrieve data from database
@@ -156,8 +168,9 @@ public class TrackActivity extends AppCompatActivity {
                 if(convertView == null){
                     System.out.println("convertView == null, get View for position: "+ position);
                     itemButton = new Button(context);
-                    itemButton.setLayoutParams(new GridView.LayoutParams(900,280));
+                    itemButton.setLayoutParams(new GridView.LayoutParams(1200,280));
                     itemButton.setPadding(8,8,8,8);
+                    itemButton.setTextColor(Color.BLACK);
                 }
                 else{
                     System.out.println("convertView != null, position: "+position);
@@ -170,7 +183,7 @@ public class TrackActivity extends AppCompatActivity {
 
                 int trackerID = recordsDBList.get(position).getItemID();
                 //add onClickListener
-                itemButton.setOnClickListener(new trackerOnClickListener(trackerID));
+                itemButton.setOnClickListener(new trackerOnClickListener(trackerID, context));
                 return itemButton;
 
             }
@@ -181,8 +194,9 @@ public class TrackActivity extends AppCompatActivity {
                 if(convertView == null){
                     System.out.println("convertView == null, get View for position: add");
                     itemButton = new Button(context);
-                    itemButton.setLayoutParams(new GridView.LayoutParams(900,280));
+                    itemButton.setLayoutParams(new GridView.LayoutParams(1200,280));
                     itemButton.setPadding(8,8,8,8);
+                    itemButton.setTextColor(Color.BLACK);
                 }
                 else{
                     System.out.println("convertView != null, position: add");
@@ -193,7 +207,7 @@ public class TrackActivity extends AppCompatActivity {
                 itemButton.setBackgroundColor(Color.LTGRAY);
                 itemButton.setId(position);
                 //add onClickListener
-                itemButton.setOnClickListener(new addTrackerOnClickListener());
+                itemButton.setOnClickListener(new addTrackerOnClickListener(context));
                 return itemButton;
             }
         }
@@ -203,38 +217,114 @@ public class TrackActivity extends AppCompatActivity {
     //listener for tracker
     private class trackerOnClickListener implements View.OnClickListener{
         int ID;
-        public trackerOnClickListener(int sID){
+        boolean on = false;
+        Context context;
+        public trackerOnClickListener(int sID, Context context){
             this.ID = sID;
+            this.context = context;
         }
         @Override
         public void onClick(View v) {
-            // the following code is just for test!!!
-            v.setBackgroundColor(Color.BLUE);
-            System.out.println(ID+ "clicked");
-            //TODO: check BT permission and send signal to Arduino 
+            if(!on) {
+
+                if (userDB.getAcBluetooth() == false) {
+                    // jump to SettingsActivity
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                    alertDialogBuilder.setTitle("Permission for Bluetooth needed");
+                    alertDialogBuilder.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                            Intent intent = new Intent(context, SettingsActivity.class);
+                            startActivity(intent);
+
+
+                        }
+                    });
+                    alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // if this button is clicked, just close
+                            // the dialog box and do nothing
+                            dialog.cancel();
+                        }
+                    });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+
+                    // show it
+                    alertDialog.show();
+
+
+                } else {
+
+                    // the following code is just for test!!!
+                    v.setBackgroundColor(Color.BLUE);
+                    System.out.println(ID + "clicked");
+                    //TODO: check whether the item is connected, and send message through bluetooth "ring"
+                    on = true;
+                }
+            }
+            else{
+                v.setBackgroundColor(Color.LTGRAY);
+                System.out.println(ID + "clicked");
+                //TODO: check whether the item is connected, and send message through bluetooth "stop"
+                on = false;
+            }
         }
     }
 
     private class addTrackerOnClickListener implements View.OnClickListener{
+        Context context;
 
-        public addTrackerOnClickListener(){
-
+        public addTrackerOnClickListener(Context context){
+            this.context = context;
         }
         @Override
         public void onClick(View v) {
-            // the following code is just for test!!!
-            v.setBackgroundColor(Color.BLUE);
+
+
             System.out.println("add clicked");
-            // Just for testing
-            trackerDB trackerRecord = new trackerDB(1994,"key","1234", false);
-            trackerRecord.save();
-            System.out.println("entry 1 saved");
-            recordsDBList.add(trackerRecord);
 
-            itemNames.add(trackerRecord.getName());
+            System.out.println("from userDB, AcBluetooth = "+userDB.getAcBluetooth());
 
-            itemView.setAdapter(new trackerGridAdapter(getApplicationContext(), itemNames));
-            //TODO: change to add activity
+            if(userDB.getAcBluetooth() == false){
+                // jump to SettingsActivity
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                alertDialogBuilder.setTitle("Permission for Bluetooth needed");
+                alertDialogBuilder.setPositiveButton("Settings",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+
+                        Intent intent = new Intent(context, SettingsActivity.class);
+                        startActivity(intent);
+
+
+                    }
+                });
+                alertDialogBuilder.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        // if this button is clicked, just close
+                        // the dialog box and do nothing
+                        dialog.cancel();
+                    }
+                });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                // show it
+                alertDialog.show();
+
+
+            }
+            else {
+
+                // Just for testing
+                trackerDB trackerRecord = new trackerDB(1994, "key", "1234", false);
+                trackerRecord.save();
+                System.out.println("entry 1 saved");
+                recordsDBList.add(trackerRecord);
+
+                itemNames.add(trackerRecord.getName());
+
+                itemView.setAdapter(new trackerGridAdapter(getApplicationContext(), itemNames));
+                //TODO: change to add activity
+            }
 
         }
 
