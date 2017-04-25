@@ -136,10 +136,10 @@ public class TrackEdit3Activity extends AppCompatActivity {
                 itemButton.setBackgroundColor(Color.LTGRAY);
                 itemButton.setId(position);
 
-                int trackerID = recordsDBList.get(position).getItemID();
-                System.out.println("trackerID = "+trackerID);
+                String add = recordsDBList.get(position).getAddress();
+                System.out.println("tracker add = "+add);
                 //add onClickListener
-                itemButton.setOnClickListener(new trackerOnClickListener(trackerID, context, itemButton));
+                itemButton.setOnClickListener(new trackerOnClickListener(add, context, itemButton));
                 return itemButton;
 
         }
@@ -147,11 +147,11 @@ public class TrackEdit3Activity extends AppCompatActivity {
 
     //listener for tracker
     private class trackerOnClickListener implements View.OnClickListener{
-        int ID;
+        String add;
         Context context;
         Button button;
-        public trackerOnClickListener(int sID, Context context, Button button){
-            this.ID = sID;
+        public trackerOnClickListener(String add, Context context, Button button){
+            this.add = add;
             this.context = context;
             this.button = button;
         }
@@ -164,8 +164,8 @@ public class TrackEdit3Activity extends AppCompatActivity {
             alertDialogBuilder.setTitle("Delete Tracker");
             alertDialogBuilder.setPositiveButton("Delete",new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog,int id) {
-                    List<trackerDB> clickedItemList = trackerDB.find(trackerDB.class, "item_id=?", Integer.toString(ID));
-                    System.out.println("there are "+ clickedItemList.size() + " items in the database with id == "+ ID);
+                    List<trackerDB> clickedItemList = trackerDB.find(trackerDB.class, "address=?", add);
+                    System.out.println("there are "+ clickedItemList.size() + " items in the database with add == "+ add);
                     trackerDB clickedItem = clickedItemList.get(0);
                     String itemName = button.getText().toString();
 

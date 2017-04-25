@@ -75,6 +75,7 @@
         <activity android:name=".EditAlarmActivity" />
         <activity android:name=".SetAlarmActivity"></activity>
 
+        <activity android:name=".TrackAddActivity"/>
     </application>
 
 </manifest>

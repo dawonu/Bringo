@@ -139,22 +139,19 @@ public class TrackEdit1Activity extends AppCompatActivity {
                 itemButton.setBackgroundColor(Color.LTGRAY);
                 itemButton.setId(position);
 
+                String trackerAdd = recordsDBList.get(position).getAddress();
+                System.out.println("tracker add = "+ trackerAdd);
 
 
 
-                int trackerID = recordsDBList.get(position).getItemID();
-                System.out.println("trackerID = "+trackerID);
-
-
-
-            List<trackerDB> clickedItemList = trackerDB.find(trackerDB.class, "item_id=?", Integer.toString(trackerID));
-            System.out.println("there are "+ clickedItemList.size() + " items in the database with id == "+ trackerID);
+            List<trackerDB> clickedItemList = trackerDB.find(trackerDB.class, "address=?", trackerAdd);
+            System.out.println("there are "+ clickedItemList.size() + " items in the database with add == "+ trackerAdd);
             trackerDB clickedItem = clickedItemList.get(0);
                 itemButton.setChecked(clickedItem.getForgetReminder());
 
             System.out.println("*******status of the clicked item is "+clickedItem.getForgetReminder());
                 //add onClickListener
-                itemButton.setOnClickListener(new trackerOnClickListener(trackerID, context));
+                itemButton.setOnClickListener(new trackerOnClickListener(trackerAdd, context));
                 return itemButton;
 
         }
@@ -162,10 +159,10 @@ public class TrackEdit1Activity extends AppCompatActivity {
 
     //listener for tracker
     private class trackerOnClickListener implements View.OnClickListener{
-        int ID;
+        String add;
         Context context;
-        public trackerOnClickListener(int sID, Context context){
-            this.ID = sID;
+        public trackerOnClickListener(String add, Context context){
+            this.add = add;
             this.context = context;
         }
         @Override
@@ -181,8 +178,8 @@ public class TrackEdit1Activity extends AppCompatActivity {
                     String tagName = ((CheckBox) v).getText().toString();
                     System.out.println(tagName);
 
-                    List<trackerDB> clickedItemList = trackerDB.find(trackerDB.class, "item_id=?", Integer.toString(ID));
-                    System.out.println("there are " + clickedItemList.size() + " items in the database with id == " + ID);
+                    List<trackerDB> clickedItemList = trackerDB.find(trackerDB.class, "address=?", add);
+                    System.out.println("there are " + clickedItemList.size() + " items in the database with add == " + add);
                     trackerDB clickedItem = clickedItemList.get(0);
                     clickedItem.changeForgetReminder(checked);
                     clickedItem.save();
@@ -223,8 +220,8 @@ public class TrackEdit1Activity extends AppCompatActivity {
                 String tagName = ((CheckBox) v).getText().toString();
                 System.out.println(tagName);
 
-                List<trackerDB> clickedItemList = trackerDB.find(trackerDB.class, "item_id=?", Integer.toString(ID));
-                System.out.println("there are " + clickedItemList.size() + " items in the database with id == " + ID);
+                List<trackerDB> clickedItemList = trackerDB.find(trackerDB.class, "address=?", add);
+                System.out.println("there are " + clickedItemList.size() + " items in the database with add == " + add);
                 trackerDB clickedItem = clickedItemList.get(0);
                 clickedItem.changeForgetReminder(checked);
                 clickedItem.save();
