@@ -118,7 +118,7 @@ public class TrackActivity extends AppCompatActivity {
 //4. check bluetooth permission
         if(userDB.getAcBluetooth() == false){
             // jump to SettingsActivity
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getApplicationContext());
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder.setTitle("Permission for Bluetooth needed");
             alertDialogBuilder.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
