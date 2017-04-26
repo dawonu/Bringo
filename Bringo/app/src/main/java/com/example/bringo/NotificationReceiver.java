@@ -5,6 +5,8 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
 import java.util.Calendar;
@@ -39,6 +41,9 @@ public class NotificationReceiver extends BroadcastReceiver {
             builder.setSmallIcon(R.drawable.notification);
             builder.setContentTitle(NotificationReceiver.NtfTitle);
             builder.setContentText(NotificationReceiver.NtfContent);
+
+            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            builder.setSound(alarmSound);
 
             // make notification disappear when user swipes the notification
             builder.setAutoCancel(true);

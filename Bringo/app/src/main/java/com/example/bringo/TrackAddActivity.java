@@ -32,12 +32,15 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Created by alisonwang on 4/25/17.
  */
 
 public class TrackAddActivity extends AppCompatActivity {
+
+    static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     private BluetoothAdapter bluetoothAdapter;
 
@@ -171,11 +174,18 @@ public class TrackAddActivity extends AppCompatActivity {
                     //TODO:
                     TextView inputBox = (EditText)view.findViewById(R.id.newname);
                     String Name = inputBox.getText().toString();
-                    trackerDB trackerRecords = new trackerDB(device.getAddress(),Name, device.getName(),false);
+                    try{
+                    BluetoothSocket bluetoothSocket = device.createRfcommSocketToServiceRecord(myUUID);
+                        System.out.println("socket = "+bluetoothSocket.toString());
+                    trackerDB trackerRecords = new trackerDB(device.getAddress(),Name, device.getName(),false, bluetoothSocket);
                     trackerRecords.save();
                     //JUMP to main activity
                     Intent intent = new Intent(getApplicationContext(), TrackActivity.class);
                     startActivity(intent);
+                    }
+                    catch (IOException e)
+                    {
+                    }
                 }
             });
             alertDialogBuilder.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
