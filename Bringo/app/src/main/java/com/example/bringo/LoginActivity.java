@@ -41,6 +41,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import javax.net.ssl.HttpsURLConnection;
+
 /**
  * A login screen that offers login via email/password.
  */
@@ -292,7 +294,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             System.out.println(jsonString);
             try {
                 URL url = new URL("https://morning-waters-80123.herokuapp.com/login");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Accept", "text/json");
 
