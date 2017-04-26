@@ -52,6 +52,8 @@ public class TrackActivity extends AppCompatActivity {
 
     private static final String SELECTED_BOTTOM_BAR_ITEM = "arg_selected_item";
 
+    private boolean onCreate;
+
     private boolean onLeave;
 
     private int currentPageID;
@@ -90,6 +92,7 @@ public class TrackActivity extends AppCompatActivity {
 
         final TrackActivity trackActivity = this;
         forgetReminder = false;
+        onCreate = true;
 
 //1. Set up upper toolbar
         toolbar = (Toolbar) findViewById(R.id.track_toolbar);
@@ -602,6 +605,7 @@ public class TrackActivity extends AppCompatActivity {
             }
         }
         System.out.println("-----------------------COMPLETE ON PAUSE---------------------");
+        onCreate = false;
     }
 
     public void setNotificationAlarm(int hour,int minute,int second, boolean repeat){
@@ -633,6 +637,26 @@ public class TrackActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        System.out.println("------------------RESUME-----------------------");
+        if(!onCreate) {
+            System.out.println("-----------------not from onCreate--------------------");
+            connectedtrackerDBList = new ArrayList<>();
+            for (int i = 0; i < pairedDBcrossList.size(); i++) {
+
+                    BluetoothSocket btSocket = null;
+                    new ConnectBT(btSocket, pairedDBcrossList.get(i)).execute();
+                    //bluetoothSocketList, connectedDeviceAddress, connectedtrackerDBList are populated in the async class
+
+            }
+            gridView = (GridView) findViewById(R.id.track_itemView);
+            gridView.setAdapter(new trackerGridAdapter(getApplicationContext(), connectedtrackerDBList, bluetoothSocketList));
+            System.out.println("size of connected trackerDB:" + connectedtrackerDBList.size());
+        }
+        System.out.println("------------------FINISH RESUME-----------------------");
+    }
 
 
 }
