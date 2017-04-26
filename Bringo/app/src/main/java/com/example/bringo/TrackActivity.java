@@ -644,6 +644,7 @@ public class TrackActivity extends AppCompatActivity {
         if(!onCreate) {
             System.out.println("-----------------not from onCreate--------------------");
             connectedtrackerDBList = new ArrayList<>();
+            bluetoothSocketList = new ArrayList<>();
             for (int i = 0; i < pairedDBcrossList.size(); i++) {
 
                     BluetoothSocket btSocket = null;
