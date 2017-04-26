@@ -67,21 +67,51 @@ public class SettingsActivity extends AppCompatActivity {
 
         // 5 setting switches
         locationSwitch = (Switch) findViewById(R.id.switch1);
+        if (userDB != null) {
+            if (userDB.getAcLocation()) {
+                locationSwitch.setChecked(true);
+            }
+        }
         locationSwitch.setOnCheckedChangeListener(new AcLocationListener());
 
         calendarSwitch = (Switch) findViewById(R.id.switch2);
+        if (userDB != null) {
+            if (userDB.getAcCalendar()) {
+                calendarSwitch.setChecked(true);
+            }
+        }
         calendarSwitch.setOnCheckedChangeListener(new AcCalendarListener());
 
         bluetoothSwitch = (Switch) findViewById(R.id.switch3);
+        if (userDB != null) {
+            if (userDB.getAcBluetooth()) {
+                bluetoothSwitch.setChecked(true);
+            }
+        }
         bluetoothSwitch.setOnCheckedChangeListener(new AcBluetoothListener());
 
         calendarReminder = (Switch) findViewById(R.id.switch4);
+        if (userDB != null) {
+            if (userDB.getRmCalendar()) {
+                calendarReminder.setChecked(true);
+            }
+        }
         calendarReminder.setOnCheckedChangeListener(new CalendarReminderListener());
 
         travelReminder = (Switch) findViewById(R.id.switch5);
+        if (userDB != null) {
+            if (userDB.getRmTravel()) {
+                travelReminder.setChecked(true);
+            }
+        }
         travelReminder.setOnCheckedChangeListener(new TravelReminderListener());
 
         bluetoothReminder = (Switch) findViewById(R.id.switch6);
+        if (userDB != null) {
+            if (userDB.getRmBluetooth()) {
+                bluetoothReminder.setChecked(true);
+            }
+        }
         bluetoothReminder.setOnCheckedChangeListener(new BluetoothReminderListener());
 
         // asking for access
