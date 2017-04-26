@@ -44,15 +44,6 @@ boolean ledon = false;
         Serial.println(string);
     }
     
-    if ((string.toInt()>=0)&&(string.toInt()<=255))
-    {
-      if (ledon==true)
-      {
-        analogWrite(led, string.toInt());
-        Serial.println(string);
-        delay(10);
-      }
-    }
  }
  
 void ledOn()
