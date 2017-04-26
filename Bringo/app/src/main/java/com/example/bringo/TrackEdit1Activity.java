@@ -16,12 +16,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.example.bringo.database.UserDB;
+import com.example.bringo.database.trackerDB;
 
 import java.util.ArrayList;
 import java.util.List;

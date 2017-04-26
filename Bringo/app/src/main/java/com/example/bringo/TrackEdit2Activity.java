@@ -15,17 +15,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridView;
 
 import java.util.ArrayList;
 import java.util.List;
-import android.app.Dialog;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.widget.TextView;
 import android.view.LayoutInflater;
+
+import com.example.bringo.database.trackerDB;
 
 /**
  * Created by alisonwang on 4/19/17.

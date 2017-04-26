@@ -6,8 +6,6 @@ import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
-import android.bluetooth.BluetoothProfile;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -35,6 +33,7 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.example.bringo.database.UserDB;
+import com.example.bringo.database.trackerDB;
 
 import java.io.IOException;
 import java.util.ArrayList;
