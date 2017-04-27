@@ -1,11 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.bringo.CreateSceActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/defaultList_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/text_createsce_step1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="This Activity is for create customised scenario step 1" />
+        android:text="Choose your scenarios:"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:textSize="20dp"
+        android:textColor="#000"/>
+
+    <GridView
+        android:id="@+id/gridview_createsce_step1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="2"
+        android:layout_weight="1"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:gravity="center"
+        android:verticalSpacing="10dp"
+        android:stretchMode="columnWidth"
+        >
+    </GridView>
+
+    <Button
+        android:text="Next"
+        android:id="@+id/btn_createsce_step1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="80dp"
+        android:layout_marginLeft="250dp"
+        android:layout_marginRight="15dp"
+        />
 </LinearLayout>

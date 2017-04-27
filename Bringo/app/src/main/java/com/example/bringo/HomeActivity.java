@@ -3,12 +3,15 @@ package com.example.bringo;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,8 +20,11 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.SimpleCursorAdapter;
 
 
+import com.example.bringo.database.CheckedItemsDB;
+import com.example.bringo.database.CustomizedSceDB;
 import com.example.bringo.database.ScenarioAlarmDB;
 
 
@@ -27,6 +33,7 @@ import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
     private final static int DEFAULT_SCENARIOS_COUNT = 6;
+    List<String> namesGet;
     private GridView gridView;
     private Toolbar myToolbar;
     private Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
@@ -78,6 +85,7 @@ public class HomeActivity extends AppCompatActivity {
      */
     public void namesReady(List<String> names){
         // set the layout's gridview by GridButtonAdapter
+        namesGet = names;
         gridView = (GridView)findViewById(R.id.scenarioView);
         gridView.setAdapter(new GridButtonAdapter(this, names));
     }
@@ -163,18 +171,79 @@ public class HomeActivity extends AppCompatActivity {
                 sceButton.setId(position);
                 // set OnClickLinstener for each item on the grid view
                 sceButton.setOnClickListener(new ScenarioOnClickListener(position));
+                // set long press click listener for customized scenarios
+                if(position>=7){
+                    sceButton.setOnLongClickListener(new ScenarioLongClickListener(position));
+                }
                 return sceButton;
             }
         }
     }
+
+    private class ScenarioLongClickListener implements View.OnLongClickListener{
+        int sID;
+        public ScenarioLongClickListener(int position){
+            String sceName = namesGet.get(position-1);
+            System.out.println("Customized sce name: "+sceName);
+            // find its sceID in CustomizedSceDB
+            List<CustomizedSceDB> sceDBs = CustomizedSceDB.find(CustomizedSceDB.class,"name = ?",sceName);
+            CustomizedSceDB sceDB = sceDBs.get(0);
+            this.sID = sceDB.getScenarioID();
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            /*
+            System.out.println("long click scenario");
+            Intent intent = new Intent(HomeActivity.this, CreateSceActivity.class);
+            startActivity(intent);*/
+            System.out.println("long click scenario");
+            View view = LayoutInflater.from(HomeActivity.this).inflate(R.layout.activity_delete_sce,null);
+
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+            builder.setMessage("Are you sure?").setView(view)
+                    .setNegativeButton("Cancel",null)
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            System.out.println("choose to delete scenario");
+                            // delete the scenario in CustomizedSceDB
+                            List<CustomizedSceDB> sceDBs = CustomizedSceDB.find(CustomizedSceDB.class,"scenario_id = ?",String.valueOf(sID));
+                            CustomizedSceDB sceDB = sceDBs.get(0);
+                            sceDB.delete();
+                            // delete items in CheckedItemsDB with scenarioID = sID
+                            CheckedItemsDB.deleteAll(CheckedItemsDB.class,"scenario_id = ?",String.valueOf(sID));
+                            // delete the scenario in Home page's grid view
+                            Intent intent = new Intent(HomeActivity.this,HomeActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+            return true;
+        }
+    }
+
 
     /*
      * ScenarioOnclickListener directs user to the item list page of the scenario they select
      */
     private class ScenarioOnClickListener implements View.OnClickListener{
         int sID;
-        public ScenarioOnClickListener(int sID){
-            this.sID = sID;
+        public ScenarioOnClickListener(int position){
+            if(position<7) {
+                this.sID = position;
+            }else{
+                String sceName = namesGet.get(position-1);
+                System.out.println("Customized sce name: "+sceName);
+                // find its sceID in CustomizedSceDB
+                List<CustomizedSceDB> sceDBs = CustomizedSceDB.find(CustomizedSceDB.class,"name = ?",sceName);
+                CustomizedSceDB sceDB = sceDBs.get(0);
+                this.sID = sceDB.getScenarioID();
+                System.out.println("it's sceID is "+sID);
+            }
         }
         @Override
         public void onClick(View v) {
@@ -182,9 +251,18 @@ public class HomeActivity extends AppCompatActivity {
             System.out.println(sID);
 
             // jump to the selected default scenario
-            Intent intent = new Intent(HomeActivity.this,DefaultListActivity.class);
-            intent.putExtra("sID",String.valueOf(sID));
-            startActivity(intent);
+            if(sID<7){
+                // jump to DefaultListActivity
+                Intent intent = new Intent(HomeActivity.this,DefaultListActivity.class);
+                intent.putExtra("sID",String.valueOf(sID));
+                startActivity(intent);
+            }else{
+                // jump to CustomizedListActivity
+                Intent intent = new Intent(HomeActivity.this,CustomizedListActivity.class);
+                intent.putExtra("sID",String.valueOf(sID));
+                startActivity(intent);
+            }
+
         }
     }
 
@@ -199,11 +277,15 @@ public class HomeActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             // the following code is just for test
-            v.setBackgroundColor(Color.BLUE);
             System.out.println(sID);
+
             // the following code is just for notification set test
-            NotificationReceiver.updateNotification("Title","Notification Content");
-            setNotificationAlarm(16, 6, 50, true);
+            // NotificationReceiver.updateNotification("Title","Notification Content");
+            // setNotificationAlarm(16, 6, 50, true);
+
+            // jump to the page of create new list step 1
+            Intent intent = new Intent(HomeActivity.this,CreateSceActivity.class);
+            startActivity(intent);
         }
     }
 

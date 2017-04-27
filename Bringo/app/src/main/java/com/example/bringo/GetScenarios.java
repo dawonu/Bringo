@@ -3,6 +3,8 @@ package com.example.bringo;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.bringo.database.CustomizedSceDB;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -69,7 +71,10 @@ public class GetScenarios {
         }
 
         private void getCustomizedScenarioNames(){
-
+            List<CustomizedSceDB> sceDBs = CustomizedSceDB.listAll(CustomizedSceDB.class);
+            for(CustomizedSceDB sceDB:sceDBs){
+                names.add(sceDB.getName());
+            }
         }
 
         /*
