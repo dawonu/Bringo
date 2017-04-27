@@ -20,6 +20,8 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import javax.net.ssl.HttpsURLConnection;
+
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText emailInput;
@@ -122,7 +124,7 @@ public class RegisterActivity extends AppCompatActivity {
             System.out.println(jsonString);
             try {
                 URL url = new URL("https://morning-waters-80123.herokuapp.com/register");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Accept", "text/json");
 

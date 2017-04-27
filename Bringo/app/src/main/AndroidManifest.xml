@@ -48,13 +48,19 @@
         <activity android:name=".HomeActivity" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".TrackActivity">
+        <activity android:name=".TrackActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <receiver android:name=".NotificationReceiver" />
+
+        <!-- Set HomeActivity as the launcher page -->
         <activity android:name=".CalendarActivity" />
         <activity android:name=".TravelActivity" />
         <activity
@@ -74,6 +80,8 @@
             android:name=".CustomizedListActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity android:name=".DeleteSceActivity"></activity>
+        <activity android:name=".TrackAddActivity" />
+        <activity android:name=".CreateDestination2Activity"></activity>
     </application>
 
 </manifest>

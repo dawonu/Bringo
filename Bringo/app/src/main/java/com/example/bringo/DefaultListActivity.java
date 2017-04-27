@@ -89,6 +89,10 @@ public class DefaultListActivity extends AppCompatActivity {
 
         //set text view and list view of essentials
         if(sID!=1){
+            if (sID==6) {
+                Intent travelIntent = new Intent(DefaultListActivity.this, TravelActivity.class);
+                DefaultListActivity.this.startActivity(travelIntent);
+            }
             // set up text view
             TextView essentialView = (TextView)findViewById(R.id.essential_name);
             essentialView.setText("Essentials");

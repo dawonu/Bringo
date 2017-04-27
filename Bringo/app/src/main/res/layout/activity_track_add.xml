@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:design="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.bringo.TrackActivity">
+    android:layout_height="match_parent">
+
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/track_toolbar"
@@ -21,7 +20,7 @@
     <GridView
         android:id="@+id/track_itemView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:numColumns="1"
         android:layout_weight="1"
         android:paddingBottom="15dp"
@@ -31,17 +30,10 @@
         android:gravity="center"
         android:verticalSpacing="10dp"
         android:stretchMode="columnWidth"
-
         >
     </GridView>
 
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/nav_track_main"
-        android:layout_width="match_parent"
-        android:background="@color/colorBar"
-        android:layout_gravity="start"
-        android:layout_height="wrap_content"
-        design:menu="@menu/bottom_nav_items" />
+
 
 
 </LinearLayout>

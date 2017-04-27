@@ -9,6 +9,7 @@
     <EditText
         android:id="@+id/newname"
         android:inputType="text"
+        android:textColor="#000"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

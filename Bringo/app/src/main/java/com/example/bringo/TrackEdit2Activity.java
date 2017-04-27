@@ -15,17 +15,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridView;
 
 import java.util.ArrayList;
 import java.util.List;
-import android.app.Dialog;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.widget.TextView;
 import android.view.LayoutInflater;
+
+import com.example.bringo.database.trackerDB;
 
 /**
  * Created by alisonwang on 4/19/17.
@@ -126,7 +127,7 @@ public class TrackEdit2Activity extends AppCompatActivity {
                 if(convertView == null){
                     System.out.println("convertView == null, get View for position: "+ position);
                     itemButton = new Button(context);
-                    itemButton.setLayoutParams(new GridView.LayoutParams(900,150));
+                    itemButton.setLayoutParams(new GridView.LayoutParams(1200,150));
                     itemButton.setPadding(8,8,8,8);
                 }
                 else{
@@ -138,10 +139,10 @@ public class TrackEdit2Activity extends AppCompatActivity {
                 itemButton.setBackgroundColor(Color.LTGRAY);
                 itemButton.setId(position);
 
-                int trackerID = recordsDBList.get(position).getItemID();
-                System.out.println("trackerID = "+trackerID);
+                String add = recordsDBList.get(position).getAddress();
+                System.out.println("tracker add = "+add);
                 //add onClickListener
-                itemButton.setOnClickListener(new trackerOnClickListener(trackerID, context, itemButton));
+                itemButton.setOnClickListener(new trackerOnClickListener(add, context, itemButton));
                 return itemButton;
 
         }
@@ -149,11 +150,11 @@ public class TrackEdit2Activity extends AppCompatActivity {
 
     //listener for tracker
     private class trackerOnClickListener implements View.OnClickListener{
-        int ID;
+        String add;
         Context context;
         Button button;
-        public trackerOnClickListener(int sID, Context context, Button button){
-            this.ID = sID;
+        public trackerOnClickListener(String add, Context context, Button button){
+            this.add = add;
             this.context = context;
             this.button = button;
         }
@@ -169,12 +170,13 @@ public class TrackEdit2Activity extends AppCompatActivity {
             alertDialogBuilder.setTitle("Rename Tracker");
             alertDialogBuilder.setPositiveButton("Rename",new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog,int id) {
-                    List<trackerDB> clickedItemList = trackerDB.find(trackerDB.class, "item_id=?", Integer.toString(ID));
-                    System.out.println("there are "+ clickedItemList.size() + " items in the database with id == "+ ID);
+                    List<trackerDB> clickedItemList = trackerDB.find(trackerDB.class, "address=?", add);
+                    System.out.println("there are "+ clickedItemList.size() + " items in the database with add == "+ add);
                     trackerDB clickedItem = clickedItemList.get(0);
 
                     TextView inputBox = (EditText)view.findViewById(R.id.newname);
                     String newName = inputBox.getText().toString();
+                    String oldNme = button.getText().toString();
                     System.out.println("new name is :"+newName);
                     if(!newName.equals("")) {
                         clickedItem.changeName(newName);
@@ -182,6 +184,10 @@ public class TrackEdit2Activity extends AppCompatActivity {
                         System.out.println("now the new name of the clicked item is" + clickedItem.getName());
 
                         button.setText(newName);
+                        itemNames.remove(oldNme);
+                        itemNames.add(newName);
+                        itemView.setAdapter(new trackerGridAdapter(context, itemNames));
+                        System.out.println("changed text on button");
                     }
                 }
             });

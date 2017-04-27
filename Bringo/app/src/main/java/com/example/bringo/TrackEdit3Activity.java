@@ -11,16 +11,15 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.TextView;
+
+import com.example.bringo.database.trackerDB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,7 +123,7 @@ public class TrackEdit3Activity extends AppCompatActivity {
                 if(convertView == null){
                     System.out.println("convertView == null, get View for position: "+ position);
                     itemButton = new Button(context);
-                    itemButton.setLayoutParams(new GridView.LayoutParams(900,150));
+                    itemButton.setLayoutParams(new GridView.LayoutParams(1200,150));
                     itemButton.setPadding(8,8,8,8);
                 }
                 else{
@@ -136,10 +135,10 @@ public class TrackEdit3Activity extends AppCompatActivity {
                 itemButton.setBackgroundColor(Color.LTGRAY);
                 itemButton.setId(position);
 
-                int trackerID = recordsDBList.get(position).getItemID();
-                System.out.println("trackerID = "+trackerID);
+                String add = recordsDBList.get(position).getAddress();
+                System.out.println("tracker add = "+add);
                 //add onClickListener
-                itemButton.setOnClickListener(new trackerOnClickListener(trackerID, context, itemButton));
+                itemButton.setOnClickListener(new trackerOnClickListener(add, context, itemButton));
                 return itemButton;
 
         }
@@ -147,11 +146,11 @@ public class TrackEdit3Activity extends AppCompatActivity {
 
     //listener for tracker
     private class trackerOnClickListener implements View.OnClickListener{
-        int ID;
+        String add;
         Context context;
         Button button;
-        public trackerOnClickListener(int sID, Context context, Button button){
-            this.ID = sID;
+        public trackerOnClickListener(String add, Context context, Button button){
+            this.add = add;
             this.context = context;
             this.button = button;
         }
@@ -164,8 +163,8 @@ public class TrackEdit3Activity extends AppCompatActivity {
             alertDialogBuilder.setTitle("Delete Tracker");
             alertDialogBuilder.setPositiveButton("Delete",new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog,int id) {
-                    List<trackerDB> clickedItemList = trackerDB.find(trackerDB.class, "item_id=?", Integer.toString(ID));
-                    System.out.println("there are "+ clickedItemList.size() + " items in the database with id == "+ ID);
+                    List<trackerDB> clickedItemList = trackerDB.find(trackerDB.class, "address=?", add);
+                    System.out.println("there are "+ clickedItemList.size() + " items in the database with add == "+ add);
                     trackerDB clickedItem = clickedItemList.get(0);
                     String itemName = button.getText().toString();
 
