@@ -1,5 +1,6 @@
 package com.example.bringo;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -123,11 +124,13 @@ public class CreateDestination1Activity extends AppCompatActivity {
                 dDB.setDepartureCarInfo(carFragment.getDepartureTime());
                 dDB.setReturnCarInfo(carFragment.getReturnTime());
 
-                if (message.getText() != null && message.getText().length() == 0) {
+//                if (message.getText() != null && message.getText().length() == 0) {
                     System.out.println("HERE");
                     dDB.save();
                     // jump to step2
-                }
+                    Intent intent = new Intent(CreateDestination1Activity.this, CreateDestination2Activity.class);
+                    startActivity(intent);
+//                }
             }
         });
 
