@@ -88,7 +88,7 @@ public class TrackAddActivity extends AppCompatActivity {
                     contain = true;
                 }
             }
-            if(!contain) {
+            if(!contain && bt.getName().contains("HC-05")) {
                 unpairedDBcrossList.add(bt);
             }
         }
