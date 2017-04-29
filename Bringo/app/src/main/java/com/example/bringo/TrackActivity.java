@@ -49,6 +49,7 @@ import java.util.UUID;
  */
 
 public class TrackActivity extends AppCompatActivity {
+    private static boolean brr = false;
 
     private static final String SELECTED_BOTTOM_BAR_ITEM = "arg_selected_item";
 
@@ -64,6 +65,7 @@ public class TrackActivity extends AppCompatActivity {
 
     private BluetoothAdapter bluetoothAdapter;
     private static BroadcastReceiver mReceiver;
+    private static IntentFilter filter3;
 
     private static HashMap<String, BluetoothSocket> bluetoothSocketHashMap = new HashMap<>();
 
@@ -191,15 +193,18 @@ public class TrackActivity extends AppCompatActivity {
                             //check permission to send alarm
                             if (forgetReminder && userDB.getRmBluetooth()) {
                                 setNotificationAlarm(h, m, s, false);
+                                System.out.println("send alarm");
                             }
 
                         }
                     }
                 };
 
-
-                IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-                this.registerReceiver(mReceiver, filter3);
+                if(!brr) {
+                    filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+                    this.registerReceiver(mReceiver, filter3);
+                    brr = true;
+                }
 
 
 
@@ -630,8 +635,7 @@ public class TrackActivity extends AppCompatActivity {
             // repeats everyday, with pendingIntent
             // So when alarm goes off NotificationReceiver will be triggered
             if (repeat == true) {
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                        AlarmManager.INTERVAL_DAY, pendingIntent);
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
             } else {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
             }
