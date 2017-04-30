@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
@@ -32,6 +34,9 @@ import java.util.Calendar;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
+    private BottomNavigationView mBottomNav;
+    private int mSelectedItem;
+    private static final String SELECTED_ITEM = "arg_selected_item";
     private final static int DEFAULT_SCENARIOS_COUNT = 6;
     List<String> namesGet;
     private GridView gridView;
@@ -55,6 +60,21 @@ public class HomeActivity extends AppCompatActivity {
         myToolbar.setTitle("Home");
         setSupportActionBar(myToolbar);
         myToolbar.setOnMenuItemClickListener(onMenuItemClick);
+
+        // set up bottom bar
+
+        mBottomNav = (BottomNavigationView) findViewById(R.id.nav_home);
+        //listener for nav item
+        mBottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                //function to change activity
+                navItemSelected(item, 0);
+                return true;
+            }
+        });
+        //set default NavItem
+        setDefaultNavItem(savedInstanceState );
 
 
         final HomeActivity ha = this;
@@ -323,6 +343,68 @@ public class HomeActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.top_bar_alarm, menu);
         return true;
     }
+
+    private void navItemSelected (MenuItem item, int current) {
+
+        // update selected item
+        mSelectedItem = item.getItemId();
+
+        // uncheck the other items.
+        for (int i = 0; i< mBottomNav.getMenu().size(); i++) {
+            MenuItem menuItem = mBottomNav.getMenu().getItem(i);
+            menuItem.setChecked(menuItem.getItemId() == item.getItemId());
+            System.out.println("uncheck others: "+item.getItemId());
+        }
+
+        int a = mBottomNav.getMenu().getItem(0).getItemId();
+        int b = mBottomNav.getMenu().getItem(1).getItemId();
+        int c = mBottomNav.getMenu().getItem(2).getItemId();
+        int d = mBottomNav.getMenu().getItem(3).getItemId();
+        //change activity here
+        if(mSelectedItem == a && current != 0){
+            System.out.println("jump to HOME");
+            Intent intent0 = new Intent(this, HomeActivity.class);
+            startActivity(intent0);
+        }
+        else if (mSelectedItem == b && current != 1){
+            System.out.println("jump to TODAY'S LIST");
+            //TODO: *********change to today's list**************
+            Intent intent1 = new Intent(this, TodayListActivity.class);
+            startActivity(intent1);
+        }
+        else if (mSelectedItem == c && current != 2){
+            System.out.println("jump to Tracking");
+            Intent intent2 = new Intent(this, TrackActivity.class);
+            startActivity(intent2);
+        }
+        else if (mSelectedItem == d && current != 3){
+            System.out.println("jump to SETTINGS");
+            Intent intent3 = new Intent(this, SettingsActivity.class);
+            startActivity(intent3);
+        }
+    }
+
+    private void setDefaultNavItem( Bundle savedInstanceState ){
+        System.out.println("set default nav item");
+        MenuItem selectedItem;
+        if (savedInstanceState != null) {
+            mSelectedItem = savedInstanceState.getInt(SELECTED_ITEM, 0);
+            selectedItem = mBottomNav.getMenu().findItem(mSelectedItem);
+            System.out.println("maybe for currently selected item");
+        } else {
+            selectedItem = mBottomNav.getMenu().getItem(0);
+            System.out.println("Current is null, so force to be 0");
+        }
+        // update selected item
+        mSelectedItem = selectedItem.getItemId();
+
+        // uncheck the other items.
+        for (int i = 0; i< mBottomNav.getMenu().size(); i++) {
+            MenuItem menuItem = mBottomNav.getMenu().getItem(i);
+            menuItem.setChecked(menuItem.getItemId() == selectedItem.getItemId());
+        }
+    }
+
 
 
 }

@@ -344,7 +344,7 @@ public class SettingsActivity extends AppCompatActivity {
         else if (mSelectedItem == b && current != 1){
             System.out.println("jump to TODAY'S LIST");
             //TODO: *********change to today's list**************
-            Intent intent1 = new Intent(this, HomeActivity.class);
+            Intent intent1 = new Intent(this, TodayListActivity.class);
             startActivity(intent1);
         }
         else if (mSelectedItem == c && current != 2){

@@ -98,7 +98,7 @@ public class CreateSceActivity extends AppCompatActivity {
             CheckBox checkBox;
             if(convertView == null){
                 checkBox = new CheckBox(context);
-                checkBox.setLayoutParams(new GridView.LayoutParams(450,220));
+                checkBox.setLayoutParams(new GridView.LayoutParams(525,220));
                 checkBox.setPadding(8,8,8,8);
             }else{
                 checkBox = (CheckBox) convertView;

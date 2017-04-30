@@ -23,6 +23,7 @@ import com.example.bringo.database.CheckedItemsDB;
 import com.example.bringo.database.CustomizedSceDB;
 import com.example.bringo.database.InputItemID;
 import com.example.bringo.database.InputSceID;
+import com.example.bringo.database.TodayListDB;
 import com.example.bringo.database.UserInputItemsDB;
 
 import org.json.JSONException;
@@ -33,7 +34,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -138,7 +141,12 @@ public class CreateSceTwoActivity extends AppCompatActivity {
         todayBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                // save all checked items into TodayListDB
+                saveTodayList();
 
+                // jump to today's list activity
+                Intent intent = new Intent(CreateSceTwoActivity.this,TodayListActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -486,5 +494,25 @@ public class CreateSceTwoActivity extends AppCompatActivity {
         }
         System.out.println(stepTwoItems.size()+" items have been saved to DB");
     }
+
+    /*
+     * save all checked items in stepTwoItems hash table
+     */
+    private void saveTodayList(){
+        TodayListDB.deleteAll(TodayListDB.class);
+        String date;
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+        date = formatter.format(calendar.getTime());
+        Set<String> checkedItemNames = stepTwoItems.keySet();
+        for(String itemName:checkedItemNames){
+            CreateSceTwoHashClass hc = stepTwoItems.get(itemName);
+            if(hc.getCheckedStatus()==true){
+                TodayListDB todayItem = new TodayListDB(date,itemName,false);
+                todayItem.save();
+            }
+        }
+    }
+
 
 }

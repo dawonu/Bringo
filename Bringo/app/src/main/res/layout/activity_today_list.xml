@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:design="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.bringo.DefaultListActivity">
+
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/todayList_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+
+    <TextView
+        android:id="@+id/todayList_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="20dp"/>
+
+    <ListView
+        android:id="@+id/today_weather_List"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="5dp"
+        >
+    </ListView>
+
+    <ListView
+        android:id="@+id/todayList_List"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        >
+    </ListView>
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/nav_todayList"
+        android:layout_width="match_parent"
+
+        android:background="@color/colorBar"
+        android:layout_gravity="start"
+        android:layout_height="wrap_content"
+        design:menu="@menu/bottom_nav_items" />
+</LinearLayout>

@@ -18,6 +18,8 @@ import java.util.Calendar;
 public class NotificationReceiver extends BroadcastReceiver {
     public static String NtfTitle = "";
     public static String NtfContent = "";
+
+    public static int[] repeatDates = new int[0];
     @Override
     /*
      * onReceive() is calles when NotificationReceiver class gets triggered
@@ -26,34 +28,72 @@ public class NotificationReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Calendar c = Calendar.getInstance();
         int day = c.get(Calendar.DAY_OF_WEEK);
-        if(day != 0) {
+        //modified
 
-            NotificationManager notificationManager = (NotificationManager) context.getSystemService(
-                    Context.NOTIFICATION_SERVICE);
-            Intent notificationClick_intent = new Intent(context, CreateSceActivity.class);
-            notificationClick_intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        //if repeatDate.length > 0, meaning repeatDates are set for repeating;
+        if (repeatDates.length > 0) {
+            for (int i = 0; i < repeatDates.length; i++) {
+                if(day == repeatDates[i]) {
+                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(
+                            Context.NOTIFICATION_SERVICE);
+                    Intent notificationClick_intent = new Intent(context, HomeActivity.class);
+                    notificationClick_intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-            // Notification service requires a pendingIntent
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 101,
-                    notificationClick_intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-            builder.setContentIntent(pendingIntent);
-            builder.setSmallIcon(R.drawable.notification);
-            builder.setContentTitle(NotificationReceiver.NtfTitle);
-            builder.setContentText(NotificationReceiver.NtfContent);
+                    // Notification service requires a pendingIntent
+                    PendingIntent pendingIntent = PendingIntent.getActivity(context, 101,
+                            notificationClick_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+                    builder.setContentIntent(pendingIntent);
+                    builder.setSmallIcon(R.drawable.notification);
+                    builder.setContentTitle(NotificationReceiver.NtfTitle);
+                    builder.setContentText(NotificationReceiver.NtfContent);
 
-            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            builder.setSound(alarmSound);
+                    Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                    builder.setSound(alarmSound);
 
-            // make notification disappear when user swipes the notification
-            builder.setAutoCancel(true);
+                    // make notification disappear when user swipes the notification
+                    builder.setAutoCancel(true);
 
-            notificationManager.notify(101, builder.build());
+                    notificationManager.notify(101, builder.build());
+                }
+
+            }
+        }
+        // repeatDates are not set, not repeat
+        else {
+            if (day != 0) {
+
+                NotificationManager notificationManager = (NotificationManager) context.getSystemService(
+                        Context.NOTIFICATION_SERVICE);
+                Intent notificationClick_intent = new Intent(context, HomeActivity.class);
+                notificationClick_intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                // Notification service requires a pendingIntent
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 101,
+                        notificationClick_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+                builder.setContentIntent(pendingIntent);
+                builder.setSmallIcon(R.drawable.notification);
+                builder.setContentTitle(NotificationReceiver.NtfTitle);
+                builder.setContentText(NotificationReceiver.NtfContent);
+
+                Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                builder.setSound(alarmSound);
+
+                // make notification disappear when user swipes the notification
+                builder.setAutoCancel(true);
+
+                notificationManager.notify(101, builder.build());
+            }
         }
     }
 
     public static void updateNotification(String title, String content){
         NotificationReceiver.NtfTitle = title;
         NotificationReceiver.NtfContent = content;
+    }
+
+    public static void setRepeatDate(int[] dates){
+        NotificationReceiver.repeatDates = dates;
     }
 }

@@ -1,5 +1,4 @@
 package com.example.bringo;
-//TODO: before leave page, disconnect all connection!
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -38,6 +37,7 @@ import com.example.bringo.database.trackerDB;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,12 +48,9 @@ import java.util.UUID;
  */
 
 public class TrackActivity extends AppCompatActivity {
+    private static boolean brr = false;
 
     private static final String SELECTED_BOTTOM_BAR_ITEM = "arg_selected_item";
-
-    private boolean onCreate;
-
-    private boolean onLeave;
 
     private int currentPageID;
 
@@ -65,18 +62,14 @@ public class TrackActivity extends AppCompatActivity {
 
     private List<trackerDB> trackerDBList;
 
-    private List<trackerDB> pairedDBcrossList = new ArrayList<>();
-
-    private Set<BluetoothDevice> pairedDevices;
-
     private BluetoothAdapter bluetoothAdapter;
+    private static BroadcastReceiver mReceiver;
+    private static IntentFilter filter3;
 
-    private List<BluetoothSocket> bluetoothSocketList = new ArrayList<>();
-
-    private HashSet<String> connectedDeviceAddress = new HashSet<>();
+    private static HashMap<String, BluetoothSocket> bluetoothSocketHashMap = new HashMap<>();
 
     //latet consideration about what item type should be more approperiate;
-    private List<trackerDB> connectedtrackerDBList = new ArrayList<>();
+    private static List<trackerDB> connectedtrackerDBList = new ArrayList<>();
 
     private UserDB userDB = UserDB.listAll(UserDB.class).get(0);
 
@@ -90,8 +83,6 @@ public class TrackActivity extends AppCompatActivity {
         setContentView(R.layout.activity_track_main);
 
         final TrackActivity trackActivity = this;
-        forgetReminder = false;
-        onCreate = true;
 
 //1. Set up upper toolbar
         toolbar = (Toolbar) findViewById(R.id.track_toolbar);
@@ -151,102 +142,117 @@ public class TrackActivity extends AppCompatActivity {
                 startActivityForResult(turnBTon,1);
             }
 
-//7. retrieve paired devices from system
-            pairedDevices = bluetoothAdapter.getBondedDevices();
-            System.out.println("size of paired divices: "+pairedDevices.size());
-
-//8. check crossed devices
+//7. check whether need forget reminder
             for (int i = 0; i < trackerDBList.size(); i++) {
-                String trackerBBaddr = trackerDBList.get(i).getAddress();
-                for (BluetoothDevice bt : pairedDevices) {
-                    if (bt.getAddress().equals(trackerBBaddr)) {
-                        pairedDBcrossList.add(trackerDBList.get(i));
-                        break;
-                    }
-                }
                 if (trackerDBList.get(i).getForgetReminder()) {
                     forgetReminder = true;
+
                 }
             }
-            System.out.println("size of crossed items: "+pairedDBcrossList.size());
+            System.out.println("++++++++++++++FORGET REMNIDER =" +forgetReminder+"++++++++++++++++");
+//8. set up forget reminder
 
-//9. set up forget reminder
-            onLeave = false;
-            if (forgetReminder && userDB.getRmBluetooth()) {
-                BroadcastReceiver mReceiver;
+
                 mReceiver = new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
                         String action = intent.getAction();
                         BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                        if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
 
-                        if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                            //Device found
-                            System.out.println("***: ACTION_FOUND");
-                        } else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
-                            //Device is now connected
-                            System.out.println("***: ACTION_ACL_CONNECTED");
-                        } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                            //Done searching
-                            System.out.println("***: ACTION_DISCOVERY_FINISHED");
-                        } else if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action)) {
-                            //Device is about to disconnect
-                            System.out.println("***: ACTION_ACL_DISCONNECT_REQUESTED");
-                        } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
-                            //Device has disconnected
-                            System.out.println("***: ACTION_ACL_DISCONNECTED");
-                            //TODO: make an alert;
-                            if(onLeave == false) {
-                                System.out.println("*********************************ALERT********************************");
-                                NotificationReceiver.updateNotification("Reminder","Remember to bring "+ pairedDBcrossList.get(0).getName());
-                                Calendar c = Calendar.getInstance();
-                                System.out.println("Current time => "+c.getTime());
-                                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                String formattedDate = df.format(c.getTime());
-                                int h = Integer.parseInt(formattedDate.substring(11,13));
-                                int m = Integer.parseInt(formattedDate.substring(14,16));
-                                int s = Integer.parseInt(formattedDate.substring(17,19));
-
-                                System.out.println(h+" "+m+" "+s);
-                                setNotificationAlarm(h, m, s, false);
-
-
+                            String deviceName = "";
+                            //delete the device from connectedtrackerDBList and bluetoothSocketHashMap
+                            for (int i = 0; i < connectedtrackerDBList.size(); i++){
+                                if(connectedtrackerDBList.get(i).getAddress().equals(device.getAddress())) {
+                                    deviceName = connectedtrackerDBList.get(i).getName();
+                                    bluetoothSocketHashMap.remove(connectedtrackerDBList.get(i).getAddress());
+                                    connectedtrackerDBList.remove(i);
+                                    break;
+                                }
                             }
 
+                            //repopulate gridview
+                            gridView = (GridView) findViewById(R.id.track_itemView);
+                            gridView.setAdapter(new trackerGridAdapter(getApplicationContext(), connectedtrackerDBList, bluetoothSocketHashMap));
+                            System.out.println("size of connected trackerDB:" + connectedtrackerDBList.size());
+
+                            //Device has disconnected
+                            System.out.println("***: ACTION_ACL_DISCONNECTED："+ deviceName);
+                            //make an alert;
+                            System.out.println("*********************************ALERT********************************");
+                            NotificationReceiver.updateNotification("Reminder","Remember to bring "+ deviceName);
+                            Calendar c = Calendar.getInstance();
+                            System.out.println("Current time => "+c.getTime());
+                            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            String formattedDate = df.format(c.getTime());
+                            int h = Integer.parseInt(formattedDate.substring(11,13));
+                            int m = Integer.parseInt(formattedDate.substring(14,16));
+                            int s = Integer.parseInt(formattedDate.substring(17,19));
+                            System.out.println(h + " " + m + " " + s);
+                            //check permission to send alarm
+                            if (forgetReminder && userDB.getRmBluetooth()) {
+                                setNotificationAlarm(h, m, s, false);
+                                System.out.println("send alarm");
+                            }
 
                         }
                     }
                 };
-                IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-                this.registerReceiver(mReceiver, filter3);
-            }
 
-
-//10. establish connections to paired and stored and not connected devices
-            for (int i = 0; i < pairedDBcrossList.size(); i++) {
-
-                if(pairedDBcrossList.get(i).getSocket() == null) {
-                    System.out.println("socket == null");
-                    BluetoothSocket btSocket = null;
-                    new ConnectBT(btSocket, pairedDBcrossList.get(i)).execute();
-                    //bluetoothSocketList, connectedDeviceAddress, connectedtrackerDBList are populated in the async class
+                if(!brr) {
+                    filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+                    this.registerReceiver(mReceiver, filter3);
+                    brr = true;
                 }
-                else{
-                    System.out.println(pairedDBcrossList.get(i).getSocket().toString());
+
+
+
+//9. establish connections to not connected devices
+            if(trackerDBList.size() > connectedtrackerDBList.size()) {
+                for (int i = 0; i < trackerDBList.size(); i++) {
+                    String addr = trackerDBList.get(i).getAddress();
+                    //check if this device is in the connected tracker DB list
+                    boolean contains = false;
+                    for (int j = 0; j < connectedtrackerDBList.size(); j++) {
+                        if (addr.equals(connectedtrackerDBList.get(j).getAddress())) {
+                            contains = true;
+                        }
+                    }
+                    //if it is not contained in the connect tracker DB list, then make the connection
+                    if (!contains) {
+                        BluetoothSocket btSocket = null;
+                        new ConnectBT(btSocket, trackerDBList.get(i)).execute();
+                    }
                 }
             }
+            else if (trackerDBList.size() < connectedtrackerDBList.size()) {
 
-            /*
-            try {
-                System.out.println("sleep 3s");
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                System.out.println("failed to sleep");
+                for (int i = 0; i < connectedtrackerDBList.size(); i++) {
+                    String addr = connectedtrackerDBList.get(i).getAddress();
+                    boolean contains = false;
+
+                    for (int j = 0; j < trackerDBList.size(); j++) {
+                        if (addr.equals(trackerDBList.get(j).getAddress())) {
+                            contains = true;
+                        }
+                    }
+                    if(!contains) {
+                        connectedtrackerDBList.remove(i);
+                        try {
+                            bluetoothSocketHashMap.get(addr).close();
+                        } catch (IOException e) {
+                            System.out.println("A-OH");
+                        }
+                        bluetoothSocketHashMap.remove(addr);
+                    }
+
+                }
+
             }
-*/
-            //11. populate gridview
+
+//10. populate gridview
             gridView = (GridView) findViewById(R.id.track_itemView);
-            gridView.setAdapter(new trackerGridAdapter(getApplicationContext(), connectedtrackerDBList, bluetoothSocketList));
+            gridView.setAdapter(new trackerGridAdapter(getApplicationContext(), connectedtrackerDBList, bluetoothSocketHashMap));
             System.out.println("size of connected trackerDB:" + connectedtrackerDBList.size());
 
         }
@@ -297,8 +303,7 @@ public class TrackActivity extends AppCompatActivity {
         }
         else if (currentPageID == b && current != 1){
             System.out.println("jump to TODAY'S LIST");
-            //TODO: *********change to today's list**************
-            Intent intent1 = new Intent(this, HomeActivity.class);
+            Intent intent1 = new Intent(this, TodayListActivity.class);
             startActivity(intent1);
         }
         else if (currentPageID == c && current != 2){
@@ -334,6 +339,7 @@ public class TrackActivity extends AppCompatActivity {
             menuItem.setChecked(menuItem.getItemId() == selectedItem.getItemId());
         }
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         System.out.println("onSaveInstanceState()");
@@ -341,21 +347,22 @@ public class TrackActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
 
+
     // Gridview adapter
     public class trackerGridAdapter extends BaseAdapter {
-        private List<trackerDB> trackerDBList;
-        private List<BluetoothSocket> bluetoothSocketList;
+        private List<trackerDB> trackerDBListcon;
+        private HashMap<String,BluetoothSocket> bluetoothSocketHashMap;
         private Context context;
 
-        public trackerGridAdapter(Context context, List<trackerDB> a, List<BluetoothSocket> b){
+        public trackerGridAdapter(Context context, List<trackerDB> a, HashMap<String,BluetoothSocket> b){
             this.context = context;
-            this.trackerDBList = a;
-            this.bluetoothSocketList = b;
+            this.trackerDBListcon = a;
+            this.bluetoothSocketHashMap = b;
         }
 
         @Override
         public int getCount() {
-            return trackerDBList.size()+1;
+            return trackerDBListcon.size()+1;
         }
 
         @Override
@@ -387,12 +394,14 @@ public class TrackActivity extends AppCompatActivity {
                     itemButton = (Button) convertView;
                 }
                 itemButton.setText(trackerDBList.get(position).getName());
+                System.out.println("                                                                "+trackerDBList.get(position).getName());
+                System.out.println();
                 itemButton.setTextSize(20);
                 itemButton.setBackgroundColor(Color.LTGRAY);
                 itemButton.setId(position);
 
                 //set onclick listener
-                itemButton.setOnClickListener(new trackerOnClickListener(context, trackerDBList.get(position).getSocket()));
+                itemButton.setOnClickListener(new trackerOnClickListener(context, bluetoothSocketHashMap.get(trackerDBListcon.get(position).getAddress())));
                 return itemButton;
 
             }
@@ -527,8 +536,6 @@ public class TrackActivity extends AppCompatActivity {
                     BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
                     //start connection
                     bluetoothSocket.connect();//start connection
-
-
                 }
             }
             catch (IOException e)
@@ -544,27 +551,21 @@ public class TrackActivity extends AppCompatActivity {
 
             if (ConnectSuccess)
             {
-                bluetoothSocketList.add(bluetoothSocket);
-                connectedDeviceAddress.add(address);
-                device.changeSocket(bluetoothSocket);
-                System.out.println("socket == "+ bluetoothSocket.toString());
-                device.save();
                 connectedtrackerDBList.add(device);
+                bluetoothSocketHashMap.put(address,bluetoothSocket);
+
 
                 System.out.println("connected to "+ address);
-                System.out.println("number of socket:" + bluetoothSocketList.size());
-
-
-
+                System.out.println("number of socket:" + bluetoothSocketHashMap.size());
             }
             else {
                 System.out.println("failed to connect to "+ address);
-                System.out.println("number of socket:" + bluetoothSocketList.size());
+                System.out.println("number of socket:" + bluetoothSocketHashMap.size());
             }
 
             //11. populate gridview
             gridView = (GridView) findViewById(R.id.track_itemView);
-            gridView.setAdapter(new trackerGridAdapter(getApplicationContext(), connectedtrackerDBList, bluetoothSocketList));
+            gridView.setAdapter(new trackerGridAdapter(getApplicationContext(), connectedtrackerDBList, bluetoothSocketHashMap));
             System.out.println("size of connected trackerDB:" + connectedtrackerDBList.size());
         }
     }
@@ -591,8 +592,11 @@ public class TrackActivity extends AppCompatActivity {
 
     @Override
     protected void onPause(){
+
         super.onPause();
+
         System.out.println("-----------------------ON PAUSE---------------------");
+         /*
         //disconnect all socket
         onLeave = true;
         for(int i = 0; i < pairedDBcrossList.size(); i++){
@@ -603,43 +607,47 @@ public class TrackActivity extends AppCompatActivity {
                 System.out.println("Fail to Disconnect "+ pairedDBcrossList.get(i).getName());
             }
         }
-        System.out.println("-----------------------COMPLETE ON PAUSE---------------------");
         onCreate = false;
+        */
+        System.out.println("-----------------------COMPLETE ON PAUSE---------------------");
+
+
     }
 
     public void setNotificationAlarm(int hour,int minute,int second, boolean repeat){
-        // the following code is just for notification test!!!
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY,hour);
-        calendar.set(Calendar.MINUTE,minute);
-        calendar.set(Calendar.SECOND,second);
+        if (forgetReminder && userDB.getRmBluetooth()) {
+            // the following code is just for notification test!!!
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minute);
+            calendar.set(Calendar.SECOND, second);
 
-        // NotificationReceiver is a BroadcastReceiver class
-        Intent intent = new Intent(getApplicationContext(),NotificationReceiver.class);
-        // Alarm Service requires a PendingIntent as param, set the intent to the pendingIntent
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),101,
-                intent,PendingIntent.FLAG_UPDATE_CURRENT);
+            // NotificationReceiver is a BroadcastReceiver class
+            Intent intent = new Intent(getApplicationContext(), NotificationReceiver.class);
+            // Alarm Service requires a PendingIntent as param, set the intent to the pendingIntent
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 101,
+                    intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        // set an alarm that works even if app is cosed, depends on calendar time,
-        // repeats everyday, with pendingIntent
-        // So when alarm goes off NotificationReceiver will be triggered
-        if(repeat == true){
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),
-                    AlarmManager.INTERVAL_DAY,pendingIntent);
-        }else{
-            alarmManager.set(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),pendingIntent);
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            // set an alarm that works even if app is cosed, depends on calendar time,
+            // repeats everyday, with pendingIntent
+            // So when alarm goes off NotificationReceiver will be triggered
+            if (repeat == true) {
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+            } else {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            }
+
+            // cancel the alarm
+            //alarmManager.cancel(pendingIntent);
         }
-
-        // cancel the alarm
-        //alarmManager.cancel(pendingIntent);
-
     }
 
     @Override
     public void onResume(){
         super.onResume();
         System.out.println("------------------RESUME-----------------------");
+        /*
         if(!onCreate) {
             System.out.println("-----------------not from onCreate--------------------");
             connectedtrackerDBList = new ArrayList<>();
@@ -655,7 +663,9 @@ public class TrackActivity extends AppCompatActivity {
             gridView.setAdapter(new trackerGridAdapter(getApplicationContext(), connectedtrackerDBList, bluetoothSocketList));
             System.out.println("size of connected trackerDB:" + connectedtrackerDBList.size());
         }
+        */
         System.out.println("------------------FINISH RESUME-----------------------");
+
     }
 
 

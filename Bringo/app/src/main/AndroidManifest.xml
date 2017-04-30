@@ -60,6 +60,8 @@
 
         </activity>
 
+        <receiver android:name=".NotificationReceiver" />
+
 
         <receiver android:name=".NotificationReceiver" />
 
@@ -82,10 +84,11 @@
         <activity
             android:name=".CustomizedListActivity"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".DeleteSceActivity"></activity>
+        <activity android:name=".DeleteSceActivity" />
         <activity android:name=".TrackAddActivity" />
-        <activity android:name=".CreateDestination2Activity">
-        </activity>
+        <activity android:name=".CreateDestination2Activity" />
+        <activity android:name=".TodayListActivity"></activity>
+        
     </application>
 
 </manifest>
