@@ -1,5 +1,4 @@
 package com.example.bringo;
-//TODO: before leave page, disconnect all connection!
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -162,7 +161,7 @@ public class TrackActivity extends AppCompatActivity {
                         if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
 
                             String deviceName = "";
-                            //TODO: delete the device from connectedtrackerDBList and bluetoothSocketHashMap
+                            //delete the device from connectedtrackerDBList and bluetoothSocketHashMap
                             for (int i = 0; i < connectedtrackerDBList.size(); i++){
                                 if(connectedtrackerDBList.get(i).getAddress().equals(device.getAddress())) {
                                     deviceName = connectedtrackerDBList.get(i).getName();
@@ -179,7 +178,7 @@ public class TrackActivity extends AppCompatActivity {
 
                             //Device has disconnected
                             System.out.println("***: ACTION_ACL_DISCONNECTED："+ deviceName);
-                            //TODO: make an alert;
+                            //make an alert;
                             System.out.println("*********************************ALERT********************************");
                             NotificationReceiver.updateNotification("Reminder","Remember to bring "+ deviceName);
                             Calendar c = Calendar.getInstance();
@@ -304,7 +303,6 @@ public class TrackActivity extends AppCompatActivity {
         }
         else if (currentPageID == b && current != 1){
             System.out.println("jump to TODAY'S LIST");
-            //TODO: *********change to today's list**************
             Intent intent1 = new Intent(this, TodayListActivity.class);
             startActivity(intent1);
         }
