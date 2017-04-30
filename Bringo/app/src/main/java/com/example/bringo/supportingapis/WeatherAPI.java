@@ -4,6 +4,8 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 
+import com.example.bringo.TodayListActivity;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -27,7 +29,14 @@ public class WeatherAPI {
 
     private String address;
 
+    private TodayListActivity ta;
+
     private Map<String, String> weatherMap = new HashMap<>();
+
+    public WeatherAPI(TodayListActivity ta){
+        this.ta = ta;
+    }
+
 
     public void refreshWeather(Location location) {
         new AsyncTask<Location, Void, Void>() {
@@ -133,6 +142,15 @@ public class WeatherAPI {
                 }
                 return null;
             }
+
+            @Override
+            protected void onPostExecute(Void result){
+                String weatherStr = getTodayWeather();
+                ta.parseWeatherStr(weatherStr);
+            }
+
+
+
         }.execute(location);
     }
 

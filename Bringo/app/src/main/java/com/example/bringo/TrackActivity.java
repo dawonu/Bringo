@@ -298,7 +298,7 @@ public class TrackActivity extends AppCompatActivity {
         else if (currentPageID == b && current != 1){
             System.out.println("jump to TODAY'S LIST");
             //TODO: *********change to today's list**************
-            Intent intent1 = new Intent(this, HomeActivity.class);
+            Intent intent1 = new Intent(this, TodayListActivity.class);
             startActivity(intent1);
         }
         else if (currentPageID == c && current != 2){
