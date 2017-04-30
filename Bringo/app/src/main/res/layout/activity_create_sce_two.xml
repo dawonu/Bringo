@@ -37,7 +37,7 @@
             android:id="@+id/text_createsce_step2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Add other items::"
+            android:text="Add other items:"
             android:layout_marginTop="15dp"
             android:textSize="20dp"
             android:textColor="#000"/>
