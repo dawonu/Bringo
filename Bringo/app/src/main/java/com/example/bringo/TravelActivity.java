@@ -71,6 +71,7 @@ public class TravelActivity extends AppCompatActivity {
 //        DestinationDB.deleteAll(DestinationDB.class);
 
         //retrieve data from database
+        DestinationDB.deleteAll(DestinationDB.class);
         destinationDBList = DestinationDB.listAll(DestinationDB.class);
         System.out.println("database size: "+destinationDBList.size());
         itemNames = new ArrayList<>();

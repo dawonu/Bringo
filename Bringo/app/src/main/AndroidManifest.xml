@@ -46,20 +46,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".CreateSceActivity" />
 
         <receiver android:name=".NotificationReceiver" />
 
         <!-- Set HomeActivity as the launcher page -->
-        <activity
-            android:name=".HomeActivity"
-            android:label="@string/app_name">
-        </activity>
+        <activity android:name=".HomeActivity" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".RegisterActivity" />
-        <activity
-            android:name=".TrackActivity"
-            android:label="@string/app_name"></activity>
+        <activity android:name=".TrackActivity"
+            android:label="@string/app_name">
+
+        </activity>
+
+        <receiver android:name=".NotificationReceiver" />
+
 
         <receiver android:name=".NotificationReceiver" />
 
@@ -86,6 +88,8 @@
         <activity android:name=".TrackAddActivity" />
         <activity android:name=".CreateDestination2Activity" />
         <activity android:name=".TodayListActivity"></activity>
+
+
     </application>
 
 </manifest>
