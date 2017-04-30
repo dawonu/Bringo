@@ -18,7 +18,7 @@ import java.util.TreeSet;
  */
 
 public class TravelCategoryAdapter extends BaseAdapter {
-    public static HashMap<Integer, Boolean> isSelected;
+    public static HashMap<Integer, Boolean> isSelected = new HashMap<Integer, Boolean>();;
     private List<HashMap<String, Object>> list = null;
     private String[] keyString = new String[] {"name", "status"};
     private String itemString;
@@ -33,7 +33,7 @@ public class TravelCategoryAdapter extends BaseAdapter {
     public TravelCategoryAdapter(Context context, List<HashMap<String, Object>> list) {
         inflater = LayoutInflater.from(context);
         this.list = list;
-        init();
+//        init();
     }
 
     private void init() {

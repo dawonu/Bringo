@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.example.bringo.database.TravelListDB;
 import com.example.bringo.dataretriever.TravelListGetter;
 import com.example.bringo.helperclasses.TravelCategory;
 import com.example.bringo.helperclasses.TravelItem;
@@ -45,7 +46,8 @@ public class CreateDestination2Activity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         myToolbar.setOnMenuItemClickListener(onMenuItemClick);
 
-        new TravelListGetter(this);
+//        new TravelListGetter();
+        renderPage();
 
         Button addBtn = (Button) findViewById(R.id.add_item_btn);
         addBtn.setOnClickListener(new View.OnClickListener(){
@@ -68,9 +70,13 @@ public class CreateDestination2Activity extends AppCompatActivity {
         return true;
     }
 
-    public void renderPage(List<TravelCategory> title, List<List<TravelItem>> content) {
-        this.category = title;
-        this.travelList = content;
+    public void renderPage() {
+        TravelListDB tdb = TravelListDB.listAll(TravelListDB.class).get(0);
+        if (tdb == null) {
+            return;
+        }
+        this.category = tdb.getCategory();
+        this.travelList = tdb.getTravelList();
 //        System.out.println("out" +title);
 //        System.out.println("out"+content);
         category.add(new TravelCategory("20", "Others"));

@@ -3,6 +3,7 @@ package com.example.bringo.dataretriever;
 import android.os.AsyncTask;
 
 import com.example.bringo.CreateDestination2Activity;
+import com.example.bringo.database.TravelListDB;
 import com.example.bringo.helperclasses.TravelCategory;
 import com.example.bringo.helperclasses.TravelItem;
 
@@ -27,10 +28,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class TravelListGetter {
 
-    private CreateDestination2Activity act;
-
-    public TravelListGetter(CreateDestination2Activity activity) {
-        this.act = activity;
+    public TravelListGetter() {
         new AsyncGetTravelList().execute();
     }
 
@@ -50,7 +48,7 @@ public class TravelListGetter {
 
         @Override
         protected void onPostExecute(Void result){
-            act.renderPage(category, travelList);
+            new TravelListDB(category, travelList);
         }
 
         private String getTravelCategoryList(){

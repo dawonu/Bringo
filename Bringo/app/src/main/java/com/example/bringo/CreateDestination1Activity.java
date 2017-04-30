@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.bringo.database.DestinationDB;
+import com.example.bringo.dataretriever.TravelListGetter;
 
 import java.util.List;
 
@@ -59,6 +60,8 @@ public class CreateDestination1Activity extends AppCompatActivity {
         if (dDB == null) {
             dDB = new DestinationDB();
         }
+
+        new TravelListGetter();
 
         destination = (EditText) findViewById(R.id.destination);
         departureMonth = (EditText) findViewById(R.id.departure_month);
