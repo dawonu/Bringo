@@ -3,6 +3,7 @@ package com.example.bringo.dataretriever;
 import android.os.AsyncTask;
 
 import com.example.bringo.CreateDestination2Activity;
+import com.example.bringo.database.TravelCategoryDB;
 import com.example.bringo.helperclasses.TravelCategory;
 import com.example.bringo.helperclasses.TravelItem;
 
@@ -22,35 +23,30 @@ import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 
 /**
- * Created by huojing on 4/27/17.
+ * Created by huojing on 4/30/17.
  */
 
-public class TravelListGetter {
-
+public class TravelCategoryGetter {
     private CreateDestination2Activity act;
 
-    public TravelListGetter(CreateDestination2Activity activity) {
+    public TravelCategoryGetter(CreateDestination2Activity activity) {
         this.act = activity;
-        new AsyncGetTravelList().execute();
+        new TravelCategoryGetter.AsyncGetTravelList().execute();
     }
 
     private class AsyncGetTravelList extends AsyncTask<String,Void,Void> {
-        private List<TravelCategory> category = new LinkedList<>();
-        private List<List<TravelItem>> travelList = new LinkedList<>();
-//        private List<String> cIDs = new LinkedList<>();
+//        private List<TravelCategory> category = new LinkedList<>();
 
         @Override
         protected Void doInBackground(String... params) {
+            TravelCategoryDB.deleteAll(TravelCategoryDB.class);
             getTravelCategoryList();
-            for (TravelCategory t: category) {
-                getTravelCategoryContentsList(t.getID());
-            }
             return null;
         }
 
         @Override
         protected void onPostExecute(Void result){
-//            act.renderPage(category, travelList);
+            act.afterGetCategory();
         }
 
         private String getTravelCategoryList(){
@@ -84,62 +80,19 @@ public class TravelListGetter {
             }
             // return the response as a String
             System.out.println("in async, category" + responseSB.toString());
-            parseJson(category, responseSB.toString(), true);
+            parseJson(responseSB.toString());
             return null;
         }
 
-        private String getTravelCategoryContentsList(String cID){
-            int status;
-            StringBuilder responseSB = new StringBuilder("");
-            HttpsURLConnection conn;
-
-            try{
-                // send GET request
-                URL url = new URL("https://morning-waters-80123.herokuapp.com/getTravelItemListByID?ID=" + cID);
-                conn = (HttpsURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-
-                // read response
-                status = conn.getResponseCode();
-                if(status != 200){
-                    return "wrong";
-                }
-                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                String responseLine = "";
-                while((responseLine = br.readLine())!=null){
-                    responseSB.append(responseLine);
-                }
-
-                // close GET request
-                conn.disconnect();
-            }catch (MalformedURLException e) {
-                e.printStackTrace();
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-            List<TravelItem> temp = new ArrayList<>();
-            parseJson(temp, responseSB.toString(), false);
-            for (TravelItem t: temp) {
-                t.setParentId(cID);
-            }
-            travelList.add(temp);
-            System.out.println("in async, content" +responseSB.toString());
-
-            return null;
-        }
-
-        private void parseJson(List list, String responseStr, boolean isCategory){
+        private void parseJson(String responseStr){
             try{
                 JSONObject responseJson  = new JSONObject(responseStr);
                 Iterator<String> keyIter = responseJson.keys();
                 while(keyIter.hasNext()){
                     String itemID = keyIter.next();
                     String itemName = responseJson.getString(itemID);
-                    if (isCategory) {
-                        category.add(new TravelCategory(itemID, itemName));
-                    } else {
-                        list.add(new TravelItem(itemID, itemName));
-                    }
+                    TravelCategoryDB temp = new TravelCategoryDB(itemID, itemName);
+                    temp.save();
                 }
             }catch(JSONException e){
                 e.printStackTrace();

@@ -61,8 +61,6 @@ public class CreateDestination1Activity extends AppCompatActivity {
             dDB = new DestinationDB();
         }
 
-        new TravelListGetter();
-
         destination = (EditText) findViewById(R.id.destination);
         departureMonth = (EditText) findViewById(R.id.departure_month);
         departureDay = (EditText) findViewById(R.id.departure_day);

@@ -13,7 +13,7 @@ import java.util.Map;
  */
 
 public class DestinationDB extends SugarRecord{
-    private int id;
+    private int did;
 
     private String destination;
 
@@ -36,12 +36,12 @@ public class DestinationDB extends SugarRecord{
     private boolean workOrLeisure;
 
     // not sure
-    private Map<Integer, String> items;
+//    private Map<Integer, String> items;
 
     public DestinationDB() {}
 
     public DestinationDB(int id) {
-        this.id = id;
+        this.did = id;
     }
 
     public void setDestination(String destination) {
@@ -52,10 +52,6 @@ public class DestinationDB extends SugarRecord{
     }
     public String getDestination() {
         return destination;
-    }
-
-    public int getID() {
-        return id;
     }
 
     public void setDepartureDate(String month, String day) {
@@ -288,6 +284,13 @@ public class DestinationDB extends SugarRecord{
     }
     public boolean getWorkOrLeisure() {
         return workOrLeisure;
+    }
+
+    public void setDesID(int did) {
+        this.did = did;
+    }
+    public int getDesID() {
+        return did;
     }
 
 }

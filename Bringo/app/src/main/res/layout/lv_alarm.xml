@@ -22,7 +22,7 @@
             android:gravity="center"
             android:id="@+id/name"
             android:layout_toRightOf="@id/iv_group_icon"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent" />
         <TextView
             android:layout_width="match_parent"

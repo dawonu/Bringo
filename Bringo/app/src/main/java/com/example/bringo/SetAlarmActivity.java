@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.example.bringo.database.CustomizedSceDB;
 import com.example.bringo.database.ScenarioAlarmDB;
 
 import java.util.ArrayList;
@@ -36,9 +37,10 @@ public class SetAlarmActivity extends AppCompatActivity {
         }
     };
     private ListView listView;
-    private List<String> defaultScenarioNames = new ArrayList<>();
-    private List<DefaultScenarios> defaultScenarios;
-    private List<ScenarioAlarmDB> defaultAlarms;
+    private List<String> scenarioNames = new ArrayList<>();
+    private List<DefaultScenarios> defaultScenarios = DefaultScenarios.listAll(DefaultScenarios.class);
+    private List<CustomizedSceDB> customizedScenarios = CustomizedSceDB.listAll(CustomizedSceDB.class);
+    private List<ScenarioAlarmDB> alarms;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,19 +52,20 @@ public class SetAlarmActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         myToolbar.setOnMenuItemClickListener(onMenuItemClick);
 
-        defaultScenarios = DefaultScenarios.listAll(DefaultScenarios.class);
-        defaultAlarms = ScenarioAlarmDB.listAll(ScenarioAlarmDB.class);
-        System.out.println("1" + defaultScenarios);
+//        defaultScenarios = DefaultScenarios.listAll(DefaultScenarios.class);
+//        customizedScenarios = CustomizedSceDB.listAll(CustomizedSceDB.class);
+        alarms = ScenarioAlarmDB.listAll(ScenarioAlarmDB.class);
+//        System.out.println("1" + defaultScenarios);
         for(DefaultScenarios ds: defaultScenarios) {
             if(ds.getName() != null) {
-                defaultScenarioNames.add(ds.getName());
+                scenarioNames.add(ds.getName());
             }
-//            System.out.println("1" + ds.scenarioID);
         }
-
-//        for(ScenarioAlarmDB s: defaultAlarms) {
-//            System.out.println("2" + s.getID());
-//        }
+        for (CustomizedSceDB cs: customizedScenarios) {
+            if (cs.getName()!= null) {
+                scenarioNames.add(cs.getName());
+            }
+        }
 
         listView = (ListView) findViewById(R.id.lv);
         listView.setAdapter(new AlarmListAdapter(this));
@@ -83,7 +86,7 @@ public class SetAlarmActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return defaultScenarioNames.size();
+            return scenarioNames.size();
         }
 
         @Override
@@ -97,21 +100,35 @@ public class SetAlarmActivity extends AppCompatActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             View view = inflater.inflate(R.layout.lv_alarm,null);
             TextView title = (TextView) view.findViewById(R.id.name);
-            title.setText(defaultScenarioNames.get(position));
+            title.setText(scenarioNames.get(position));
             TextView description = (TextView) view.findViewById(R.id.description);
-            description.setText(defaultAlarms.get(position).getTime());
+            System.out.println(alarms.get(position).getTime());
+            description.setText(alarms.get(position).getTime());
 
             Switch s = (Switch) view.findViewById(R.id.aswitch);
+            final ScenarioAlarmDB alarm = alarms.get(position);
+            if(alarm.isTurnOn()) {
+                s.setChecked(true);
+            }
             s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
-
+                        alarm.turnOn();
+                        alarm.save();
+                        NotificationReceiver.updateNotification("Reminder", "Check this " + alarm.getName()+ " before you leave.");
+                        NotificationReceiver.setRepeatDate(alarm.getNotificationArray());
+                        boolean repeat = alarm.getRepeat();
+                        int hour = alarm.getHour();
+                        int minute = alarm.getMinute();
+                        setNotificationAlarm(hour, minute, repeat);
                     } else {
-
+                        alarm.turnOff();
+                        alarm.save();
+                        // how to cancel?
                     }
                 }
             });

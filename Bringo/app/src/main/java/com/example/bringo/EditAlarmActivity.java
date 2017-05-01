@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.example.bringo.database.CustomizedSceDB;
 import com.example.bringo.database.DestinationDB;
 import com.example.bringo.database.ScenarioAlarmDB;
 
@@ -42,10 +43,12 @@ public class EditAlarmActivity extends AppCompatActivity {
     private ExpandableListView expandableListView;
     private AlertDialog dialog;
     private ScenarioAlarmDB tmpDB;
-    private EditText tmpTime;
+    private Button tmpTime;
+    private EditText tmpTimeText;
 
-    private List<String> defaultScenarioNames = new ArrayList<>();
-    private List<DefaultScenarios> group;
+    private List<String> scenarioNames = new ArrayList<>();
+    private List<DefaultScenarios> group1;
+    private List<CustomizedSceDB> group2;
     private List<ScenarioAlarmDB> children;
 
     @Override
@@ -59,11 +62,17 @@ public class EditAlarmActivity extends AppCompatActivity {
 
         expandableListView = (ExpandableListView) findViewById(R.id.elv);
 
-        group = DefaultScenarios.listAll(DefaultScenarios.class);
+        group1 = DefaultScenarios.listAll(DefaultScenarios.class);
+        group2 = CustomizedSceDB.listAll(CustomizedSceDB.class);
         children = ScenarioAlarmDB.listAll(ScenarioAlarmDB.class);
-        for(DefaultScenarios ds: group) {
+        for(DefaultScenarios ds: group1) {
             if(ds.getName() != null) {
-                defaultScenarioNames.add(ds.getName());
+                scenarioNames.add(ds.getName());
+            }
+        }
+        for(CustomizedSceDB cs: group2) {
+            if(cs.getName() != null) {
+                scenarioNames.add(cs.getName());
             }
         }
 //        System.out.println(defaultScenarioNames);
@@ -89,7 +98,7 @@ public class EditAlarmActivity extends AppCompatActivity {
 
         @Override
         public int getGroupCount() {
-            return group.size();
+            return group1.size() + group2.size();
         }
 
         @Override
@@ -99,7 +108,11 @@ public class EditAlarmActivity extends AppCompatActivity {
 
         @Override
         public Object getGroup(int groupPosition) {
-            return group.get(groupPosition);
+            if (groupPosition < group1.size()) {
+                return group1.get(groupPosition);
+            } else {
+                return group2.get(groupPosition-group1.size());
+            }
         }
 
         @Override
@@ -128,7 +141,11 @@ public class EditAlarmActivity extends AppCompatActivity {
             ImageView iv_group_icon = (ImageView) view.findViewById(R.id.iv_group_icon);
             TextView tv_group_name = (TextView) view.findViewById(R.id.tv_group_name);
 
-            tv_group_name.setText(group.get(groupPosition).getName());
+            if (groupPosition < group1.size()) {
+                tv_group_name.setText(group1.get(groupPosition).getName());
+            } else {
+                tv_group_name.setText(group2.get(groupPosition-group1.size()).getName());
+            }
 
             if(isExpanded){
                 iv_group_icon.setImageResource(R.drawable.arrow_down);
@@ -143,7 +160,8 @@ public class EditAlarmActivity extends AppCompatActivity {
             View view = inflater.inflate(R.layout.elv_content,null);
 
             tmpDB = (ScenarioAlarmDB) getChild(groupPosition, childPosition);
-            tmpTime = (EditText) view.findViewById(R.id.time_picker);
+            tmpTime = (Button) view.findViewById(R.id.time_picker);
+            tmpTimeText = (EditText) view.findViewById(R.id.time_picker_text);
             tmpTime.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -166,13 +184,13 @@ public class EditAlarmActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             tmpDB.save();
-                            tmpTime.setText(tmpDB.getTime());
+                            tmpTimeText.setText(tmpDB.getTime());
                             dialog.dismiss();
                         }});
                 }
             });
             if (tmpDB.getTime() != null) {
-                tmpTime.setText(tmpDB.getTime());
+                tmpTimeText.setText(tmpDB.getTime());
             }
 
             boolean[] choice = tmpDB.getDayOfWeek();

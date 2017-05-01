@@ -8,6 +8,8 @@ import com.orm.SugarRecord;
 
 public class ScenarioAlarmDB extends SugarRecord{
     private int id;
+    private String name;
+    private boolean isTurnOn;
 
     private int hour;
     private int minute;
@@ -25,6 +27,11 @@ public class ScenarioAlarmDB extends SugarRecord{
 
     public ScenarioAlarmDB(int id) {
         this.id = id;
+    }
+
+    public ScenarioAlarmDB(int id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     public int getID() {
@@ -111,12 +118,67 @@ public class ScenarioAlarmDB extends SugarRecord{
         return dayOfWeek;
     }
 
+    public int[] getNotificationArray() {
+        int count = 0;
+        boolean[] b = getDayOfWeek();
+        for (boolean i: b) {
+            if (i) {
+                count++;
+            }
+        }
+        int[] result = new int[count];
+        int index = 0;
+        if (monday) {
+            result[index] = 1;
+            index++;
+        }
+        if (tuesday) {
+            result[index] = 2;
+            index++;
+        }
+        if (wednesday) {
+            result[index] = 3;
+            index++;
+        }
+        if (thursday) {
+            result[index] = 4;
+            index++;
+        }
+        if (friday) {
+            result[index] = 5;
+            index++;
+        }
+        if (saturday) {
+            result[index] = 6;
+            index++;
+        }
+        if (sunday) {
+            result[index] = 7;
+            index++;
+        }
+        return result;
+    }
+
     public void checkRepeat() {repeat = true;}
 
     public void uncheckRepeat() {repeat = false;}
 
     public boolean getRepeat() {
         return repeat;
+    }
+
+    public String getName() { return name;}
+
+    public void turnOn() {
+        isTurnOn = true;
+    }
+
+    public void turnOff() {
+        isTurnOn = false;
+    }
+
+    public boolean isTurnOn() {
+        return isTurnOn;
     }
 
 }

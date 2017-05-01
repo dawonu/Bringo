@@ -91,12 +91,19 @@ public class HomeActivity extends AppCompatActivity {
      */
     private void initialDefaultScenariosDB(){
         DefaultScenarios.deleteAll(DefaultScenarios.class);
-        ScenarioAlarmDB.deleteAll(ScenarioAlarmDB.class);
-        for(int i=1;i<=DEFAULT_SCENARIOS_COUNT;i++){
-            DefaultScenarios defaultSce = new DefaultScenarios(i);
-            defaultSce.save();
-            ScenarioAlarmDB defaultAlarm = new ScenarioAlarmDB(i);
-            defaultAlarm.save();
+        List<ScenarioAlarmDB> list = ScenarioAlarmDB.listAll(ScenarioAlarmDB.class);
+        if (list == null || list.size() == 0) {
+            for(int i=1;i<=DEFAULT_SCENARIOS_COUNT;i++){
+                DefaultScenarios defaultSce = new DefaultScenarios(i);
+                defaultSce.save();
+                ScenarioAlarmDB defaultAlarm = new ScenarioAlarmDB(i, defaultSce.getName());
+                defaultAlarm.save();
+            }
+        } else {
+            for(int i=1;i<=DEFAULT_SCENARIOS_COUNT;i++){
+                DefaultScenarios defaultSce = new DefaultScenarios(i);
+                defaultSce.save();
+            }
         }
     }
 
@@ -273,9 +280,14 @@ public class HomeActivity extends AppCompatActivity {
             // jump to the selected default scenario
             if(sID<7){
                 // jump to DefaultListActivity
-                Intent intent = new Intent(HomeActivity.this,DefaultListActivity.class);
-                intent.putExtra("sID",String.valueOf(sID));
-                startActivity(intent);
+                if (sID == 6) {
+                    Intent intent = new Intent(HomeActivity.this,TravelActivity.class);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(HomeActivity.this,DefaultListActivity.class);
+                    intent.putExtra("sID",String.valueOf(sID));
+                    startActivity(intent);
+                }
             }else{
                 // jump to CustomizedListActivity
                 Intent intent = new Intent(HomeActivity.this,CustomizedListActivity.class);

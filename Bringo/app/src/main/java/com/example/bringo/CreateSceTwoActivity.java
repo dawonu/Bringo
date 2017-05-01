@@ -23,6 +23,7 @@ import com.example.bringo.database.CheckedItemsDB;
 import com.example.bringo.database.CustomizedSceDB;
 import com.example.bringo.database.InputItemID;
 import com.example.bringo.database.InputSceID;
+import com.example.bringo.database.ScenarioAlarmDB;
 import com.example.bringo.database.TodayListDB;
 import com.example.bringo.database.UserInputItemsDB;
 
@@ -121,6 +122,10 @@ public class CreateSceTwoActivity extends AppCompatActivity {
                                 int sceID = getInputSceAddID();
                                 CustomizedSceDB customizedSce = new CustomizedSceDB(sceID,sceName);
                                 customizedSce.save();
+
+                                ScenarioAlarmDB customizedAlarm = new ScenarioAlarmDB(sceID, sceName);
+                                customizedAlarm.save();
+
                                 // load checked items in hash table into CheckedItemsDB
                                 loadStepTwoItems(sceID);
                                 // jump to Home Activity
