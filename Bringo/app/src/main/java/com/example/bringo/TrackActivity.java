@@ -84,6 +84,7 @@ public class TrackActivity extends AppCompatActivity {
 
         final TrackActivity trackActivity = this;
 
+        userDB = UserDB.listAll(UserDB.class).get(0);
 //1. Set up upper toolbar
         toolbar = (Toolbar) findViewById(R.id.track_toolbar);
         toolbar.setTitle("Tracking");
@@ -143,17 +144,15 @@ public class TrackActivity extends AppCompatActivity {
             }
 
 //7. check whether need forget reminder
+            forgetReminder = false;
             for (int i = 0; i < trackerDBList.size(); i++) {
                 if (trackerDBList.get(i).getForgetReminder()) {
                     forgetReminder = true;
-
                 }
             }
             System.out.println("++++++++++++++FORGET REMNIDER =" +forgetReminder+"++++++++++++++++");
 //8. set up forget reminder
-
-
-                mReceiver = new BroadcastReceiver() {
+            mReceiver = new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
                         String action = intent.getAction();
@@ -190,6 +189,7 @@ public class TrackActivity extends AppCompatActivity {
                             int s = Integer.parseInt(formattedDate.substring(17,19));
                             System.out.println(h + " " + m + " " + s);
                             //check permission to send alarm
+                            System.out.println(forgetReminder+" "+ userDB.getRmBluetooth());
                             if (forgetReminder && userDB.getRmBluetooth()) {
                                 setNotificationAlarm(h, m, s, false);
                                 System.out.println("send alarm");
@@ -197,13 +197,13 @@ public class TrackActivity extends AppCompatActivity {
 
                         }
                     }
-                };
+            };
 
-                if(!brr) {
+            if(!brr) {
                     filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
                     this.registerReceiver(mReceiver, filter3);
                     brr = true;
-                }
+            }
 
 
 
@@ -590,29 +590,7 @@ public class TrackActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onPause(){
 
-        super.onPause();
-
-        System.out.println("-----------------------ON PAUSE---------------------");
-         /*
-        //disconnect all socket
-        onLeave = true;
-        for(int i = 0; i < pairedDBcrossList.size(); i++){
-            try {
-                pairedDBcrossList.get(i).getSocket().close();
-                System.out.println("Disconnect "+ pairedDBcrossList.get(i).getName());
-            } catch (Exception e) {
-                System.out.println("Fail to Disconnect "+ pairedDBcrossList.get(i).getName());
-            }
-        }
-        onCreate = false;
-        */
-        System.out.println("-----------------------COMPLETE ON PAUSE---------------------");
-
-
-    }
 
     public void setNotificationAlarm(int hour,int minute,int second, boolean repeat){
         if (forgetReminder && userDB.getRmBluetooth()) {
@@ -643,30 +621,6 @@ public class TrackActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onResume(){
-        super.onResume();
-        System.out.println("------------------RESUME-----------------------");
-        /*
-        if(!onCreate) {
-            System.out.println("-----------------not from onCreate--------------------");
-            connectedtrackerDBList = new ArrayList<>();
-            bluetoothSocketList = new ArrayList<>();
-            for (int i = 0; i < pairedDBcrossList.size(); i++) {
-
-                    BluetoothSocket btSocket = null;
-                    new ConnectBT(btSocket, pairedDBcrossList.get(i)).execute();
-                    //bluetoothSocketList, connectedDeviceAddress, connectedtrackerDBList are populated in the async class
-
-            }
-            gridView = (GridView) findViewById(R.id.track_itemView);
-            gridView.setAdapter(new trackerGridAdapter(getApplicationContext(), connectedtrackerDBList, bluetoothSocketList));
-            System.out.println("size of connected trackerDB:" + connectedtrackerDBList.size());
-        }
-        */
-        System.out.println("------------------FINISH RESUME-----------------------");
-
-    }
 
 
 }
