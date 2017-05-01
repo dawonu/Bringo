@@ -96,7 +96,7 @@ public class HomeActivity extends AppCompatActivity {
             for(int i=1;i<=DEFAULT_SCENARIOS_COUNT;i++){
                 DefaultScenarios defaultSce = new DefaultScenarios(i);
                 defaultSce.save();
-                ScenarioAlarmDB defaultAlarm = new ScenarioAlarmDB(i, defaultSce.getName());
+                ScenarioAlarmDB defaultAlarm = new ScenarioAlarmDB(i);
                 defaultAlarm.save();
             }
         } else {
@@ -312,8 +312,8 @@ public class HomeActivity extends AppCompatActivity {
             System.out.println(sID);
 
             // the following code is just for notification set test
-            // NotificationReceiver.updateNotification("Title","Notification Content");
-            // setNotificationAlarm(16, 6, 50, true);
+             NotificationReceiver.updateNotification("Title","Notification Content");
+             setNotificationAlarm(17, 59, 50, false);
 
             // jump to the page of create new list step 1
             Intent intent = new Intent(HomeActivity.this,CreateSceActivity.class);
@@ -327,6 +327,7 @@ public class HomeActivity extends AppCompatActivity {
         calendar.set(Calendar.HOUR_OF_DAY,hour);
         calendar.set(Calendar.MINUTE,minute);
         calendar.set(Calendar.SECOND,second);
+        System.out.println("************************* i am working.TAT");
 
         // NotificationReceiver is a BroadcastReceiver class
         Intent intent = new Intent(getApplicationContext(),NotificationReceiver.class);

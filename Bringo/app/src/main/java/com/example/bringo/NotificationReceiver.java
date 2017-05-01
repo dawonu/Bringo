@@ -62,7 +62,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         // repeatDates are not set, not repeat
         else {
             if (day != 0) {
-
+                System.out.println("************************* i am working.");
                 NotificationManager notificationManager = (NotificationManager) context.getSystemService(
                         Context.NOTIFICATION_SERVICE);
                 Intent notificationClick_intent = new Intent(context, HomeActivity.class);

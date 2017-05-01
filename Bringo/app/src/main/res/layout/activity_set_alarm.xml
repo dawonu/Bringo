@@ -24,4 +24,17 @@
 
     </ListView>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:id="@+id/home"
+            android:text="Back"
+            android:layout_marginEnd="30dp"/>
+    </RelativeLayout>
+
 </LinearLayout>

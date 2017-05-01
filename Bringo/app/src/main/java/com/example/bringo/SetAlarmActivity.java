@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -37,6 +38,7 @@ public class SetAlarmActivity extends AppCompatActivity {
         }
     };
     private ListView listView;
+    private Button homeButton;
     private List<String> scenarioNames = new ArrayList<>();
     private List<DefaultScenarios> defaultScenarios = DefaultScenarios.listAll(DefaultScenarios.class);
     private List<CustomizedSceDB> customizedScenarios = CustomizedSceDB.listAll(CustomizedSceDB.class);
@@ -69,6 +71,15 @@ public class SetAlarmActivity extends AppCompatActivity {
 
         listView = (ListView) findViewById(R.id.lv);
         listView.setAdapter(new AlarmListAdapter(this));
+
+        homeButton = (Button) findViewById(R.id.home);
+        homeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SetAlarmActivity.this, HomeActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -105,7 +116,7 @@ public class SetAlarmActivity extends AppCompatActivity {
             TextView title = (TextView) view.findViewById(R.id.name);
             title.setText(scenarioNames.get(position));
             TextView description = (TextView) view.findViewById(R.id.description);
-            System.out.println(alarms.get(position).getTime());
+//            System.out.println(alarms.get(position).getTime());
             description.setText(alarms.get(position).getTime());
 
             Switch s = (Switch) view.findViewById(R.id.aswitch);
@@ -117,14 +128,21 @@ public class SetAlarmActivity extends AppCompatActivity {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
+                        System.out.println("alarm is on: "+scenarioNames.get(position));
                         alarm.turnOn();
                         alarm.save();
-                        NotificationReceiver.updateNotification("Reminder", "Check this " + alarm.getName()+ " before you leave.");
+
+                        String alarmName = scenarioNames.get(position);
+                        NotificationReceiver.updateNotification("Reminder", "Check this list: \"" + alarmName+ "\" before you leave.");
+//                        System.out.println("array: " + alarm.getNotificationArray()[0]);
                         NotificationReceiver.setRepeatDate(alarm.getNotificationArray());
+
                         boolean repeat = alarm.getRepeat();
                         int hour = alarm.getHour();
+                        System.out.println("hour"+hour);
                         int minute = alarm.getMinute();
-                        setNotificationAlarm(hour, minute, repeat);
+                        System.out.println("minute"+minute);
+                        setNotificationAlarm(hour, minute, 0, false);
                     } else {
                         alarm.turnOff();
                         alarm.save();
@@ -163,5 +181,35 @@ public class SetAlarmActivity extends AppCompatActivity {
         //alarmManager.cancel(pendingIntent);
 
     }
+
+    public void setNotificationAlarm(int hour,int minute,int second, boolean repeat){
+        // the following code is just for notification test!!!
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY,hour);
+        calendar.set(Calendar.MINUTE,minute);
+        calendar.set(Calendar.SECOND,second);
+
+        // NotificationReceiver is a BroadcastReceiver class
+        Intent intent = new Intent(getApplicationContext(),NotificationReceiver.class);
+        // Alarm Service requires a PendingIntent as param, set the intent to the pendingIntent
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),101,
+                intent,PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        // set an alarm that works even if app is cosed, depends on calendar time,
+        // repeats everyday, with pendingIntent
+        // So when alarm goes off NotificationReceiver will be triggered
+        if(repeat == true){
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY,pendingIntent);
+        }else{
+            alarmManager.set(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),pendingIntent);
+        }
+
+        // cancel the alarm
+        //alarmManager.cancel(pendingIntent);
+
+    }
+
 
 }

@@ -243,9 +243,9 @@ public class TodayListActivity extends AppCompatActivity implements LocationList
         boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
         boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 //        System.out.println("GPS"+isGPSEnabled);
-        if(!isGPSEnabled) {
-            startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), 0);
-        }
+//        if(!isGPSEnabled) {
+//            startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), 0);
+//        }
 
         Criteria locationCriteria = new Criteria();
 

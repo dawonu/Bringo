@@ -1,5 +1,7 @@
 package com.example.bringo;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
@@ -26,6 +28,7 @@ import com.example.bringo.database.DestinationDB;
 import com.example.bringo.database.ScenarioAlarmDB;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -241,6 +244,23 @@ public class EditAlarmActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     tmpDB.save();
+                    if (tmpDB.isTurnOn()) {
+//                        System.out.println("alarm is on: "+scenarioNames.get(groupPosition));
+                        tmpDB.turnOn();
+                        tmpDB.save();
+
+                        String alarmName = "name";
+                        NotificationReceiver.updateNotification("Reminder", "Check this list: \"" + alarmName+ "\" before you leave.");
+//                        System.out.println("array: " + tmpDB.getNotificationArray()[0]);
+                        NotificationReceiver.setRepeatDate(tmpDB.getNotificationArray());
+
+                        boolean repeat = tmpDB.getRepeat();
+                        int hour = tmpDB.getHour();
+                        System.out.println("hour"+hour);
+                        int minute = tmpDB.getMinute();
+                        System.out.println("minute"+minute);
+                        setNotificationAlarm(hour, minute, 11, false);
+                    }
                 }
             });
 
@@ -283,5 +303,42 @@ public class EditAlarmActivity extends AppCompatActivity {
             }
             tmpDB.save();
         }
+    }
+
+    public void setNotificationAlarm(int hour,int minute,int second, boolean repeat){
+        System.out.println("hour"+hour);
+        System.out.println("minute"+minute);
+        // the following code is just for notification test!!!
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY,hour);
+        calendar.set(Calendar.MINUTE,minute);
+        calendar.set(Calendar.SECOND,second);
+
+        // NotificationReceiver is a BroadcastReceiver class
+        Intent intent = new Intent(getApplicationContext(),NotificationReceiver.class);
+        // Alarm Service requires a PendingIntent as param, set the intent to the pendingIntent
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),101,
+                intent,PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        // set an alarm that works even if app is cosed, depends on calendar time,
+        // repeats everyday, with pendingIntent
+        // So when alarm goes off NotificationReceiver will be triggered
+        if(repeat == true){
+            System.out.println("millis1 "+calendar.getTimeInMillis());
+            Calendar tmp = Calendar.getInstance();
+            System.out.println("millis2 "+tmp.getTimeInMillis());
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY,pendingIntent);
+        }else{
+            System.out.println("millis1 "+calendar.getTimeInMillis());
+            Calendar tmp = Calendar.getInstance();
+            System.out.println("millis2 "+tmp.getTimeInMillis());
+            alarmManager.set(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),pendingIntent);
+        }
+
+        // cancel the alarm
+        //alarmManager.cancel(pendingIntent);
+
     }
 }
