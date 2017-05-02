@@ -1,6 +1,8 @@
 package com.example.bringo;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -26,6 +28,7 @@ import android.widget.TextView;
 
 import com.example.bringo.database.CheckedItemsDB;
 import com.example.bringo.database.TodayListDB;
+import com.example.bringo.database.UserDB;
 import com.example.bringo.supportingapis.WeatherAPI;
 
 import org.w3c.dom.Text;
@@ -47,6 +50,7 @@ public class TodayListActivity extends AppCompatActivity implements LocationList
     private ArrayList<String> weatherItemsList = new ArrayList<>();
     private Location currentLocation;
     private WeatherAPI weatherGetter;
+    private UserDB userDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,8 +87,33 @@ public class TodayListActivity extends AppCompatActivity implements LocationList
         // load items from TodayListDB
         loadTodayListDB(todayDate);
 
-        // load weathr items
-        loadWeatherItems();
+        // check userDB for location allow status
+        userDB = UserDB.listAll(UserDB.class).get(0);
+        if(userDB.getAcLocation()==false){
+            // jump to SettingsActivity
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setTitle("Access to Location needed");
+            alertDialogBuilder.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                    startActivity(intent);
+                }
+            });
+            alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // if this button is clicked, just close
+                    // the dialog box and do nothing
+                    dialog.cancel();
+                    itemsReady();
+                }
+            });
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            // show it
+            alertDialog.show();
+        } else {
+            // load weathr items
+            loadWeatherItems();
+        }
 
     }
 
