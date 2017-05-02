@@ -48,9 +48,9 @@ import java.util.UUID;
  */
 
 public class TrackActivity extends AppCompatActivity {
-    private static boolean brr = false;
 
     private static final String SELECTED_BOTTOM_BAR_ITEM = "arg_selected_item";
+
 
     private int currentPageID;
 
@@ -73,7 +73,7 @@ public class TrackActivity extends AppCompatActivity {
 
     private UserDB userDB = UserDB.listAll(UserDB.class).get(0);
 
-    private boolean forgetReminder;
+    protected boolean forgetReminder;
     //SPP UUID. Look for it
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
@@ -189,7 +189,7 @@ public class TrackActivity extends AppCompatActivity {
                             int s = Integer.parseInt(formattedDate.substring(17,19));
                             System.out.println(h + " " + m + " " + s);
                             //check permission to send alarm
-                            System.out.println(forgetReminder+" "+ userDB.getRmBluetooth());
+                            System.out.println(userDB.getRmBluetooth());
                             if (forgetReminder && userDB.getRmBluetooth()) {
                                 setNotificationAlarm(h, m, s, false);
                                 System.out.println("send alarm");
@@ -198,11 +198,9 @@ public class TrackActivity extends AppCompatActivity {
                         }
                     }
             };
-
-            if(!brr) {
-                    filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-                    this.registerReceiver(mReceiver, filter3);
-                    brr = true;
+            if(forgetReminder) {
+                filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+                this.registerReceiver(mReceiver, filter3);
             }
 
 
