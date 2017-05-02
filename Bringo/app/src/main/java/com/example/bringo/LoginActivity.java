@@ -114,6 +114,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             public void onClick(View view) {
                 Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
                 startActivityForResult(signInIntent, RC_SIGN_IN);
+                System.out.println("asking for admission");
             }
         });
     }
@@ -136,9 +137,24 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             //Getting google account
             GoogleSignInAccount acct = result.getSignInAccount();
 
-            //Displaying name and email
-            mEmailView.setText(acct.getEmail());
-            mPasswordView.setText(acct.getEmail());
+//            mEmailView.setText(acct.getEmail());
+//            mPasswordView.setText(acct.getEmail());
+            List<UserDB> list = UserDB.listAll(UserDB.class);
+            System.out.println("list: " + list.size());
+            // delete all testing records from data base
+            UserDB.deleteAll(UserDB.class);
+            list = UserDB.listAll(UserDB.class);
+            System.out.println("list: " + list.size());
+
+            // register, create a new one
+            UserDB userDB = new UserDB(acct.getEmail());
+            userDB.save();
+            System.out.println("name: " + userDB.getUserName());
+            list = UserDB.listAll(UserDB.class);
+            System.out.println("list: " + list.size());
+
+            Intent settingsIntent = new Intent(LoginActivity.this, SettingsActivity.class);
+            LoginActivity.this.startActivity(settingsIntent);
 
         } else {
             //If login fails
@@ -260,14 +276,14 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         }
     }
 
-    private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
-        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(LoginActivity.this,
-                        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-
-        mEmailView.setAdapter(adapter);
-    }
+//    private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
+//        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
+//        ArrayAdapter<String> adapter =
+//                new ArrayAdapter<>(LoginActivity.this,
+//                        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
+//
+//        mEmailView.setAdapter(adapter);
+//    }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {

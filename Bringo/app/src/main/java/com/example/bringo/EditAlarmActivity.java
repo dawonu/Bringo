@@ -249,7 +249,7 @@ public class EditAlarmActivity extends AppCompatActivity {
                         tmpDB.turnOn();
                         tmpDB.save();
 
-                        String alarmName = "name";
+                        String alarmName = tmpDB.getName();
                         NotificationReceiver.updateNotification("Reminder", "Check this list: \"" + alarmName+ "\" before you leave.");
 //                        System.out.println("array: " + tmpDB.getNotificationArray()[0]);
                         NotificationReceiver.setRepeatDate(tmpDB.getNotificationArray());
