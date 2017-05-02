@@ -126,6 +126,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             //Calling a new function to handle signin
+            System.out.println("result: " + result);
             handleSignInResult(result);
         }
     }

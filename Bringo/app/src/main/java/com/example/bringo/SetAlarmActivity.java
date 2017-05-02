@@ -142,7 +142,11 @@ public class SetAlarmActivity extends AppCompatActivity {
                         System.out.println("hour"+hour);
                         int minute = alarm.getMinute();
                         System.out.println("minute"+minute);
-                        setNotificationAlarm(hour, minute, 0, false);
+                        if (hour == 0 || minute == 0) {
+                            setNotificationAlarm(22, 22, 22, false);
+                        } else {
+                            setNotificationAlarm(hour, minute, 0, false);
+                        }
                     } else {
                         alarm.turnOff();
                         alarm.save();
