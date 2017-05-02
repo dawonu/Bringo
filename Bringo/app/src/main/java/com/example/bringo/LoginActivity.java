@@ -159,7 +159,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
         } else {
             //If login fails
-            Toast.makeText(this, "Login Failed", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Login Failed. Google login cannot run with emulator. ", Toast.LENGTH_LONG).show();
         }
     }
 

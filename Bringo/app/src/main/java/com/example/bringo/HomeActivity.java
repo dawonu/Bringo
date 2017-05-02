@@ -312,8 +312,8 @@ public class HomeActivity extends AppCompatActivity {
             System.out.println(sID);
 
             // the following code is just for notification set test
-             NotificationReceiver.updateNotification("Title","Notification Content");
-             setNotificationAlarm(17, 59, 50, false);
+//             NotificationReceiver.updateNotification("Title","Notification Content");
+//             setNotificationAlarm(17, 59, 50, false);
 
             // jump to the page of create new list step 1
             Intent intent = new Intent(HomeActivity.this,CreateSceActivity.class);
