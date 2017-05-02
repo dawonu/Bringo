@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,6 +101,22 @@ public class GetScenarios {
                 String responseLine = "";
                 while((responseLine = br.readLine())!=null){
                     responseSB.append(responseLine);
+                }
+
+
+
+
+
+
+                Certificate[] certs = conn.getServerCertificates();
+                for(Certificate cert : certs){
+                    System.out.println("Cert Type : " + cert.getType());
+                    System.out.println("Cert Public Key : " + cert.getPublicKey());
+                    System.out.println("Cert Public Key Algorithm : "
+                            + cert.getPublicKey().getAlgorithm());
+                    System.out.println("Cert Public Key Format : "
+                            + cert.getPublicKey().getFormat());
+                    System.out.println("\n");
                 }
 
                 // close GET request
