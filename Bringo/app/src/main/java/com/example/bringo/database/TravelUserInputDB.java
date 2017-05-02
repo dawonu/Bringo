@@ -9,12 +9,14 @@ import com.orm.SugarRecord;
 public class TravelUserInputDB extends SugarRecord {
     int itemID;
     String itemName;
+    int destinationID;
 
     public TravelUserInputDB(){
     }
 
-    public TravelUserInputDB(int itemID,String itemName){
+    public TravelUserInputDB(int itemID, int destinationID, String itemName){
         this.itemID = itemID;
+        this.destinationID = destinationID;
         this.itemName = itemName;
     }
 

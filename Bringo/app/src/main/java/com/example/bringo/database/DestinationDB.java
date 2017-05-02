@@ -21,13 +21,13 @@ public class DestinationDB extends SugarRecord{
 
     private Calendar returnDate;
 
-    private List<String> departureFlightInfo;
+    private String departureFlightInfo;
 
-    private List<String> returnFlightInfo;
+    private String returnFlightInfo;
 
-    private List<String> departureTrainInfo;
+    private String departureTrainInfo;
 
-    private List<String> returnTrainInfo;
+    private String returnTrainInfo;
 
     private String departureCarInfo;
 
@@ -106,17 +106,20 @@ public class DestinationDB extends SugarRecord{
         if (numFlight == null || airport == null || time == null) {
             return;
         }
-        if (departureFlightInfo == null) {
-            departureFlightInfo = new LinkedList<>();
-        }
-        departureFlightInfo.add(numFlight + "," + airport + "," + time);
+//        if (departureFlightInfo == null) {
+//            departureFlightInfo = new LinkedList<>();
+//        }
+        departureFlightInfo = numFlight + "," + airport + "," + time;
     }
 
     // id is the index of the transfer flight
     private String[] getDepartureFlightInfo(int id) {
-        String infoAll = departureFlightInfo.get(id);
-        String[] info = infoAll.split(",");
-        return info;
+        String infoAll = departureFlightInfo;
+        if (infoAll != null) {
+            String[] info = infoAll.split(",");
+            return info;
+        }
+        return null;
     }
 
     public String getDepatureFlightNum(int id) {
@@ -150,17 +153,20 @@ public class DestinationDB extends SugarRecord{
         if (numFlight == null || airport == null || time == null) {
             return;
         }
-        if (returnFlightInfo == null) {
-            returnFlightInfo = new LinkedList<>();
-        }
-        returnFlightInfo.add(numFlight + "," + airport + "," + time);
+//        if (returnFlightInfo == null) {
+//            returnFlightInfo = new LinkedList<>();
+//        }
+        returnFlightInfo = numFlight + "," + airport + "," + time;
     }
 
     // id is the index of the transfer flight
     private String[] getReturnFlightInfo(int id) {
-        String infoAll = returnFlightInfo.get(id);
-        String[] info = infoAll.split(",");
-        return info;
+        String infoAll = returnFlightInfo;
+        if (infoAll != null) {
+            String[] info = infoAll.split(",");
+            return info;
+        }
+        return null;
     }
 
     public String getReturnFlightNum(int id) {
@@ -194,17 +200,20 @@ public class DestinationDB extends SugarRecord{
         if (location == null || time == null) {
             return;
         }
-        if (departureTrainInfo == null) {
-            departureTrainInfo = new LinkedList<>();
-        }
-        departureTrainInfo.add(location + "," + time);
+//        if (departureTrainInfo == null) {
+//            departureTrainInfo = new LinkedList<>();
+//        }
+        departureTrainInfo = location + "," + time;
     }
 
     // id is the index of the transfer flight
     private String[] getDepartureTrainInfo(int id) {
-        String infoAll = departureTrainInfo.get(id);
-        String[] info = infoAll.split(",");
-        return info;
+        String infoAll = departureTrainInfo;
+        if (infoAll != null) {
+            String[] info = infoAll.split(",");
+            return info;
+        }
+        return null;
     }
 
     public String getDepartureTrainStation(int id) {
@@ -229,17 +238,20 @@ public class DestinationDB extends SugarRecord{
         if (location == null || time == null) {
             return;
         }
-        if (returnTrainInfo == null) {
-            returnTrainInfo = new LinkedList<>();
-        }
-        returnTrainInfo.add(location + "," + time);
+//        if (returnTrainInfo == null) {
+//            returnTrainInfo = new LinkedList<>();
+//        }
+        returnTrainInfo = location + "," + time;
     }
 
     // id is the index of the transfer flight
     private String[] getReturnTrainInfo(int id) {
-        String infoAll = returnTrainInfo.get(id);
-        String[] info = infoAll.split(",");
-        return info;
+        String infoAll = returnTrainInfo;
+        if (infoAll != null) {
+            String[] info = infoAll.split(",");
+            return info;
+        }
+        return null;
     }
     public String getReturnTrainStation(int id) {
         try {

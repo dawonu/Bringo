@@ -49,31 +49,25 @@ public class CreateDestination2Activity extends AppCompatActivity {
     private Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
-            // the following code is just fot testing
+            // set Destination's id
+//            int destinationid = getDestinationID();
+            ddb.setDesID(destinationid);
+            ddb.save();
+
+            // save items
             int count = 0;
-            Set<String> checkedItemNmes = stepTwoItems.keySet();
-            for(String itemName:checkedItemNmes){
+            Set<String> checkedItemNames = stepTwoItems.keySet();
+            for(String itemName:checkedItemNames){
                 CreateDestination2HashClass hc = stepTwoItems.get(itemName);
                 if(hc.getCheckedStatus()==true){
                     count++;
                     System.out.println("count "+count+":"+itemName+" "+hc.getItemID()+" "+hc.getCheckedStatus());
-                }
-            }
-            System.out.println("Now hashTable has:"+count);
-
-            Set<String> checkedItemNames = stepTwoItems.keySet();
-            List list = DestinationDB.listAll(DestinationDB.class);
-            DestinationDB ddb = (DestinationDB) list.get(list.size() - 1);
-            int destinationid = getDestinationID();
-            ddb.setDesID(destinationid);
-            ddb.save();
-            for(String itemName:checkedItemNames){
-                CreateDestination2HashClass hc = stepTwoItems.get(itemName);
-                if(hc.getCheckedStatus()==true){
                     TravelCheckItemsDB checkedItem = new TravelCheckItemsDB(hc.getItemID(),destinationid, itemName);
                     checkedItem.save();
                 }
             }
+            System.out.println("Now hashTable has:"+count);
+
             System.out.println(stepTwoItems.size()+" items have been saved to DB");
             Intent intent = new Intent(getBaseContext(),TravelActivity.class);
             startActivity(intent);
@@ -88,6 +82,9 @@ public class CreateDestination2Activity extends AppCompatActivity {
 
     // record the status
     private Hashtable<String, CreateDestination2HashClass> stepTwoItems = new Hashtable<>();
+    private int destinationid = getDestinationID();
+    List list = DestinationDB.listAll(DestinationDB.class);
+    DestinationDB ddb = (DestinationDB) list.get(list.size() - 1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +112,7 @@ public class CreateDestination2Activity extends AppCompatActivity {
                 setListViewHeightBasedOnChildren(lv);
                 // save user input item into UserInputDB
                 int inputItemID = getInputItemAddID();
-                TravelUserInputDB inputItemsDB = new TravelUserInputDB(inputItemID,inputItem);
+                TravelUserInputDB inputItemsDB = new TravelUserInputDB(inputItemID, destinationid, inputItem);
                 inputItemsDB.save();
 
                 // update hash table
@@ -132,7 +129,11 @@ public class CreateDestination2Activity extends AppCompatActivity {
     public void afterGetCategory() {
         // load categories
         List<TravelCategoryDB> categoryList = TravelCategoryDB.listAll(TravelCategoryDB.class);
-        System.out.println("categories: " + categoryList);
+//        System.out.println("categories: " + categoryList);
+        // remove business trip
+        if (!ddb.getWorkOrLeisure()) {
+            categoryList.remove(1);
+        }
         // for every category
         for (int i = 0; i < categoryList.size(); i++) {
             // find this category's view
@@ -176,14 +177,14 @@ public class CreateDestination2Activity extends AppCompatActivity {
                 while(keyIter.hasNext()){
                     String itemID = keyIter.next();
                     String itemName = responseJson.getString(itemID);
-                    CreateDestination2HashClass hashVal = new CreateDestination2HashClass(Integer.parseInt(itemID), Integer.parseInt(cID), false);
+                    CreateDestination2HashClass hashVal = new CreateDestination2HashClass(Integer.parseInt(itemID), Integer.parseInt(cID), true);
                     stepTwoItems.put(itemName, hashVal);
                     oneCategoryItems.add(itemName);
                     }
                 } catch(JSONException e) {
                 e.printStackTrace();
             }
-            List<TravelCheckItemsDB> items = CheckedItemsDB.find(TravelCheckItemsDB.class,"category_id = ?",String.valueOf(cID));
+            List<TravelCheckItemsDB> items = TravelCheckItemsDB.find(TravelCheckItemsDB.class,"category_id = ?",String.valueOf(cID));
             for (TravelCheckItemsDB item: items) {
                 int itemID = item.getItemID();
                 if (itemID < 1000) {

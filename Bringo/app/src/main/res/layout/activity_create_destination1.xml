@@ -58,6 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="MM"
+            android:inputType="number"
             android:maxLines="1"/>
         <TextView
             android:layout_width="wrap_content"
@@ -68,6 +69,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="DD"
+            android:inputType="number"
             android:maxLines="1"/>
         <TextView
             android:layout_width="wrap_content"
@@ -80,6 +82,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="MM"
+            android:inputType="number"
             android:maxLines="1"/>
         <TextView
             android:layout_width="wrap_content"
@@ -90,6 +93,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="DD"
+            android:inputType="number"
             android:maxLines="1"/>
     </LinearLayout>
 

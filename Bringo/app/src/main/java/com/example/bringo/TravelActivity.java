@@ -227,6 +227,7 @@ private class DestinationLongClickListener implements View.OnLongClickListener{
             // the following code is just for test!!!
             System.out.println(dID);
             Intent intent = new Intent(TravelActivity.this, ViewDestinationActivity.class);
+            intent.putExtra("dID",String.valueOf(dID));
             TravelActivity.this.startActivity(intent);
         }
     }

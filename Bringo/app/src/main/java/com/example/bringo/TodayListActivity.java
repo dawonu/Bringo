@@ -247,7 +247,7 @@ public class TodayListActivity extends AppCompatActivity implements LocationList
 //        if(!isGPSEnabled) {
 //            startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), 0);
 //        }
-        
+
         Criteria locationCriteria = new Criteria();
 
         if (isNetworkEnabled) {
